@@ -1,6 +1,6 @@
 "use server"
 
-import { signIn } from "./auth"
+import { signIn } from "../auth"
 import { executeAction } from "./executeAction"
 
 export async function LoginAction(formData:FormData) {
