@@ -28,7 +28,7 @@ const Navbar = () => {
 				<Link href="#features" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Funcționalități</Link>
 				<Link href="#how" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Cum funcționează</Link>
 			</nav>
-			<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+			<div className="navbar-actions" style={{ display: "flex", alignItems: "center", gap: 10 }}>
 				<Link href="/login" style={{ fontSize: 13, color: "#9e9b94", textDecoration: "none", padding: "7px 16px" }}>
 					Autentificare
 				</Link>

@@ -20,12 +20,106 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Responsive Classes */
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+}
+
+.how-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 48px;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 16px 24px;
+    gap: 16px;
+}
+
+.cert-main-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.footer-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+    .how-grid { gap: 24px; }
+}
+
 @media (max-width: 768px) {
     .features-grid { grid-template-columns: 1fr 1fr !important; }
-    .roles-grid    { grid-template-columns: 1fr !important; }
+    .how-grid { grid-template-columns: 1fr 1fr !important; gap: 32px; }
+    .meta-grid { grid-template-columns: 1fr 1fr !important; }
+    
+    header { padding: 0 24px !important; }
+    header nav { display: none !important; }
+    
+    .footer-flex { 
+        flex-direction: column; 
+        gap: 24px; 
+        padding: 32px 24px; 
+    }
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
+
 @media (max-width: 480px) {
     .features-grid { grid-template-columns: 1fr !important; }
-    header { padding: 0 20px !important; }
-    header nav { display: none !important; }
+    .how-grid { grid-template-columns: 1fr !important; gap: 24px; }
+    .meta-grid { grid-template-columns: 1fr !important; }
+    
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    .hero-actions > a {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .cert-main-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .navbar-actions > a:first-child {
+        display: none !important; /* Hide login text on very small screens, keep Get Started button */
+    }
 }

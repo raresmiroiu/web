@@ -67,8 +67,7 @@ export default function Hero() {
 			</p>
 
 			{/* Actions */}
-			<div style={{
-				display: "flex", alignItems: "center", gap: 14,
+			<div className="hero-actions" style={{
 				marginBottom: 80,
 				animation: "fadeUp 0.7s 0.4s ease forwards", opacity: 0,
 			}}>
@@ -115,7 +114,7 @@ function CertificatePreview() {
 				<div style={{ height: 3, background: "linear-gradient(90deg, #c9a84c, #6b5a28)" }} />
 
 				{/* Main info */}
-				<div style={{ padding: "20px 24px", display: "flex", alignItems: "center", gap: 16, borderBottom: "1px solid #232623" }}>
+				<div className="cert-main-info">
 					<svg width="28" height="28" viewBox="0 0 40 40" fill="none">
 						<path d="M20 2L23.5 8.5L30.5 6.5L29.5 13.5L36 16L32 22L36 28L29.5 30.5L30.5 37.5L23.5 35.5L20 42L16.5 35.5L9.5 37.5L10.5 30.5L4 28L8 22L4 16L10.5 13.5L9.5 6.5L16.5 8.5L20 2Z" stroke="#c9a84c" strokeWidth="1.5" fill="none" />
 						<circle cx="20" cy="22" r="7" stroke="#c9a84c" strokeWidth="1.2" fill="none" />
@@ -138,7 +137,7 @@ function CertificatePreview() {
 				</div>
 
 				{/* Meta */}
-				<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", padding: "16px 24px", gap: 16 }}>
+				<div className="meta-grid">
 					{[
 						{ label: "Data emiterii", val: "14 nov. 2024" },
 						{ label: "Domeniu", val: "Ing. software" },

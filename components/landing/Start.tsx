@@ -20,7 +20,7 @@ const Start = () => {
 			<p style={{ fontSize: 15, color: "#5c5f5a", marginBottom: 40 }}>
 				Înregistrează-te în câteva minute și începe să certifici.
 			</p>
-			<div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
+			<div className="hero-actions" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
 				<Link href="/register" style={{
 					display: "inline-flex", alignItems: "center", gap: 8,
 					fontSize: 14, fontWeight: 500, color: "#0d0f0e",

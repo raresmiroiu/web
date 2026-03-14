@@ -2,10 +2,9 @@ import Link from "next/link";
 
 export default function Footer() {
 	return (
-		<footer style={{
+		<footer className="footer-flex" style={{
 			padding: "24px 48px",
 			borderTop: "1px solid #232623",
-			display: "flex", alignItems: "center", justifyContent: "space-between",
 		}}>
 			<div style={{ display: "flex", alignItems: "center", gap: 20 }}>
 				<Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
@@ -21,7 +20,7 @@ export default function Footer() {
 				<span style={{ fontSize: 12, color: "#2e332e" }}>© 2026 Sigillium. Toate drepturile rezervate.</span>
 			</div>
 
-			<div style={{ display: "flex", gap: 24 }}>
+			<div className="footer-links" style={{ display: "flex", gap: 24 }}>
 				{["Termeni", "Confidențialitate", "Contact"].map((item) => (
 					<Link key={item} href="#" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
 						{item}

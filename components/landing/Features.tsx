@@ -53,10 +53,7 @@ const Features = () => {
 			</div>
 
 			{/* Grid */}
-			<div style={{
-				display: "grid",
-				gridTemplateColumns: "repeat(3, 1fr)",
-				gap: 1,
+			<div className="features-grid" style={{
 				border: "1px solid #232623",
 				borderRadius: 8, overflow: "hidden",
 			}}>

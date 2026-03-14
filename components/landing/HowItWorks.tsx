@@ -42,7 +42,7 @@ const HowItWorks = () => {
 					Cum <em style={{ color: "#c9a84c", fontStyle: "italic" }}>funcționează</em>
 				</h2>
 
-				<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 48 }}>
+				<div className="how-grid">
 					{steps.map(({ num, title, desc }) => (
 						<div key={num}>
 							<div style={{
