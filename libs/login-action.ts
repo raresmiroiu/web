@@ -2,6 +2,7 @@
 
 import { signIn } from "../auth"
 import { executeAction } from "./executeAction"
+import {redirect} from "next/navigation"
 
 export async function LoginAction(formData:FormData) {
     const res = await executeAction({
@@ -13,6 +14,8 @@ export async function LoginAction(formData:FormData) {
             });
         },
     });
-    console.log(res);
+    if(res.success){
+        redirect("/me")
+    }
     return res;
 }

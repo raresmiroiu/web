@@ -25,8 +25,6 @@ const Page = () => {
               console.log(res);
               if (!res.success) {
                 alert("Invalid Credentials");
-              } else {
-                redirect("/");
               }
             }}
           >
