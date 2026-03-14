@@ -10,8 +10,8 @@ CREATE TABLE users (
     role user_role NOT NULL DEFAULT 'PARTICIPANT'
 );
 
-INSERT INTO users (email, password) 
-VALUES ('test@example.com', '$2b$10$nzoV17di3tJeLLcYBnaRP.UXvJzW3KkgB1Wq8.4OwlEVdSlAvmqWu');
+INSERT INTO users(email,password,role)
+VALUES ('test@example.com','$2b$10$nzoV17di3tJeLLcYBnaRP.UXvJzW3KkgB1Wq8.4OwlEVdSlAvmqWu','PARTICIPANT')
 
-INSERT INTO users(email, password, role)
-VALUES ('admin@example.com', '$2b$10$xdspo7yUV1D.1rTAI7/ujuGPwIWM9tvHNGGfYztJ8VXYJ5uOUJCl.');
+INSERT INTO users(email,password,role)
+VALUES ('admin@example.com','$2b$10$xdspo7yUV1D.1rTAI7/ujuGPwIWM9tvHNGGfYztJ8VXYJ5uOUJCl.','ADMIN')
