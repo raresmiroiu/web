@@ -6,7 +6,7 @@ const Start = () => {
         <section style={{
             padding: "120px 24px",
             textAlign: "center",
-            background: "#131614",
+            background: "#0d0f0e",
             borderTop: "1px solid #232623",
         }}>
             <h2 style={{
