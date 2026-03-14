@@ -37,6 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return {
                         id: user.id,
                         email: user.email,
+                        role: user.role,
                     };
                 }
                 catch (error) {
@@ -48,5 +49,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
     session: {
         strategy: "jwt"
-    },
+    }
 })
