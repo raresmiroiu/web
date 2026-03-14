@@ -2,7 +2,7 @@ import Link from "next/link"
 
 import React from 'react'
 
-const Navbar = () => {
+const NavbarMain = () => {
 	return (
 		<header style={
 			{
@@ -24,24 +24,8 @@ const Navbar = () => {
 					SIGIL<span style={{ color: "#c9a84c" }}>LI</span>UM
 				</span>
 			</Link>
-			<nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
-				<Link href="#features" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Funcționalități</Link>
-				<Link href="#how" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Cum funcționează</Link>
-			</nav>
-			<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-				<Link href="/login" style={{ fontSize: 13, color: "#9e9b94", textDecoration: "none", padding: "7px 16px" }}>
-					Autentificare
-				</Link>
-				<Link href="/register" style={{
-					fontSize: 13, fontWeight: 500, color: "#0d0f0e",
-					background: "#c9a84c", padding: "8px 20px",
-					borderRadius: 4, textDecoration: "none", letterSpacing: "0.04em"
-				}}>
-					Începe
-				</Link>
-			</div>
 		</header>
 	);
 }
 
-export default Navbar
+export default NavbarMain

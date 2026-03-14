@@ -17,16 +17,6 @@ export async function LoginAction(formData: FormData) {
         },
     });
     if (res.success) {
-        // const session = await auth()
-        // const role = session?.user?.role
-
-        // if(role==="ADMIN"){
-        //     redirect("/admin")
-        // }
-        // else if(role==="ORG_OWNER"){
-        //     redirect("/org")
-        // }
-        // else redirect("/me")
         const result = await pool.query(
             "SELECT role FROM users WHERE email = $1",
             [email]
