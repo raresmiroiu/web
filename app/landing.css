@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0d0f0e;
+  --surface: #131614;
+  --surface2: #181b19;
+  --border: #232623;
+  --border2: #2e332e;
+  --gold: #c9a84c;
+  --gold-dim: #6b5a28;
+  --gold-glow: rgba(201,168,76,0.1);
+  --gold-subtle: rgba(201,168,76,0.05);
+  --text: #e8e4db;
+  --text-mid: #9e9b94;
+  --text-muted: #5c5f5a;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -10,27 +10,27 @@ export const authConfig = {
     },
     callbacks: {
         jwt({ token, user, trigger, session }) {
-            console.log("JWT callback triggered. token:", token, "user:", user);
+            //console.log("JWT callback triggered. token:", token, "user:", user);
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
             }
-            console.log("JWT returning token:", token);
+            //console.log("JWT returning token:", token);
             return token;
         },
         session({ session, token }) {
-            console.log("Session callback triggered. session before:", session, "token:", token);
+            //console.log("Session callback triggered. session before:", session, "token:", token);
             if (session.user && token.role) {
                 session.user.role = token.role as string;
                 session.user.id = token.id as string;
             }
-            console.log("Session callback returning:", session);
+            //console.log("Session callback returning:", session);
             return session;
         },
         authorized({ auth, request: { nextUrl } }) {
 
-            console.log("auth object:", JSON.stringify(auth));
-            console.log("role:", auth?.user?.role);
+            //console.log("auth object:", JSON.stringify(auth));
+            //console.log("role:", auth?.user?.role);
 
             const isLoggedIn = !!auth?.user;
             const role = (auth?.user)?.role;
