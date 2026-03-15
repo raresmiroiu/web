@@ -15,18 +15,18 @@ interface Props {
 
 export default function CertificateTable({ certificates, showRevokeButton = false }: Props) {
     return (
-        <div>
+        <div style={{ overflowX: "auto" }}>
+            <div style={{ minWidth: 500 }}>
             {certificates.map((cert) => (
                 <div key={cert.id} style={{
                     background: "#131614",
                     border: "1px solid #2e332e",
                     borderRadius: 6,
-                    padding: "14px 16px",
+                    padding: "12px 16px",
                     marginBottom: 8,
                     display: "flex",
                     alignItems: "center",
-                    gap: 12,
-                    flexWrap: "wrap"
+                    gap: 12
                 }}>
                     {/* Icon */}
                     <div style={{
@@ -43,7 +43,7 @@ export default function CertificateTable({ certificates, showRevokeButton = fals
                     </div>
 
                     {/* Info */}
-                    <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 14, color: "#e8e4db", fontFamily: "'Cormorant Garamond', serif", marginBottom: 2 }}>
                             {cert.title}
                         </div>
@@ -92,6 +92,7 @@ export default function CertificateTable({ certificates, showRevokeButton = fals
                     </div>
                 </div>
             ))}
+            </div>
         </div>
     );
 }
