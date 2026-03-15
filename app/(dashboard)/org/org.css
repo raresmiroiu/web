@@ -1,0 +1,124 @@
+/* --- Navbar Dashboard --- */
+.nav-dash {
+  padding: 0 48px;
+}
+.nav-dash-name {
+  display: block;
+}
+
+/* --- Org Dashboard Layout --- */
+.org-layout-main {
+  display: flex;
+  padding-top: 64px;
+}
+.org-content {
+  flex: 1;
+  padding: 32px 28px;
+  min-width: 0;
+}
+
+/* --- Sidebar --- */
+.org-sidebar {
+  width: 200px;
+  background: #0f1110;
+  border-right: 1px solid #2e332e;
+  min-height: calc(100vh - 64px);
+  flex-shrink: 0;
+  padding-top: 24px;
+  transition: all 0.3s ease;
+}
+.org-sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid #1a1d1b;
+  margin-bottom: 12px;
+}
+
+/* --- StatsRow --- */
+.org-stats-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* --- Form --- */
+.org-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+/* --- Responsive Media Queries --- */
+@media (max-width: 768px) {
+  /* Navbar */
+  .nav-dash {
+    padding: 0 24px !important;
+  }
+  .nav-dash-name {
+    display: none !important;
+  }
+
+  /* Sidebar handling */
+  .org-layout-main {
+    flex-direction: column;
+  }
+  .org-sidebar {
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #2e332e;
+    padding-top: 16px;
+  }
+  .org-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px 12px;
+  }
+  .org-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 0 8px 8px;
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+  }
+  .org-sidebar nav::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .org-sidebar nav a {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .org-sidebar-nav-item {
+    border-left: none !important;
+    border-bottom: 2px solid transparent !important;
+    padding: 10px 18px !important;
+    border-radius: 6px;
+    margin: 0 4px;
+    background: transparent !important;
+  }
+  .org-sidebar-nav-item.active {
+    border-bottom: none !important;
+    background: rgba(201,168,76,0.08) !important;
+    color: #c9a84c !important;
+  }
+  
+  .org-content {
+    padding: 24px 16px;
+  }
+  
+  /* Make 3-col stats wrap on tablet */
+  .org-stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* 1-col on mobile */
+  .org-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .org-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
