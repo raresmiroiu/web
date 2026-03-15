@@ -15,8 +15,9 @@ interface Props {
 
 export default function CertificateCard({ cert }: Props) {
 	return (
-		<div style={{
-			background: "#131614",
+		<>
+			<div style={{
+				background: "#131614",
 			border: "1px solid #2e332e",
 			borderRadius: 6,
 			overflow: "hidden",
@@ -26,7 +27,7 @@ export default function CertificateCard({ cert }: Props) {
 			<div style={{ height: 2, background: "linear-gradient(90deg, #c9a84c, #2e332e)" }} />
 
 			{/* Main row */}
-			<div style={{ padding: "16px 18px", display: "flex", alignItems: "center", gap: 14 }}>
+			<div className="cert-card-main">
 
 				{/* Icon */}
 				<div style={{
@@ -56,7 +57,7 @@ export default function CertificateCard({ cert }: Props) {
 				</div>
 
 				{/* Right side */}
-				<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+				<div className="cert-card-right">
 					{cert.revoked ? (
 						<div style={{
 							display: "flex", alignItems: "center", gap: 5,
@@ -90,11 +91,7 @@ export default function CertificateCard({ cert }: Props) {
 			</div>
 
 			{/* Meta row */}
-			<div style={{
-				padding: "10px 18px",
-				borderTop: "1px solid #232623",
-				display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8,
-			}}>
+			<div className="cert-card-meta">
 				{[
 					{ label: "Emis la", val: cert.issuedAt },
 					{ label: "Cod unic", val: cert.code },
@@ -111,5 +108,6 @@ export default function CertificateCard({ cert }: Props) {
 				))}
 			</div>
 		</div>
+		</>
 	);
 }

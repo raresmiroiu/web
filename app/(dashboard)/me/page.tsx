@@ -4,6 +4,7 @@ import NavbarDashboard from "@/components/NavbarDashboard";
 import Stats from "@/components/me/Stats";
 import CertificateList from "@/components/me/CertificateList";
 import { Certificate } from "@/components/me/CertificateCard";
+import "./me.css";
 
 export default async function MePage() {
   const session = await auth();

@@ -7,10 +7,11 @@ export default async function NavbarDashboard() {
   const name = session?.user?.name ?? session?.user?.email ?? "Utilizator";
   const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 	return (
-		<header style={
+		<>
+		<header className="nav-dash" style={
 			{
 				position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-				padding: "0 48px", height: 64,
+				height: 64,
 				display: "flex", alignItems: "center", justifyContent: "space-between",
 				borderBottom: "1px solid #232623",
 				background: "rgba(13,15,14,0.88)",
@@ -28,7 +29,7 @@ export default async function NavbarDashboard() {
 				</span>
 			</Link>
 			<div style={{display:"flex",alignItems:"center",gap:16}}>
-				<span style={{fontSize:12,color:"#5c5f5a"}}>{name}</span>
+				<span className="nav-dash-name" style={{fontSize:12,color:"#5c5f5a"}}>{name}</span>
 				<div style={{
 					width:32,height:32,borderRadius:"50%",
 					background:"#1e2420",border:"1px solid #2e332e",
@@ -51,5 +52,6 @@ export default async function NavbarDashboard() {
 				</form>
 			</div>
 		</header>
+		</>
 	);
 }
