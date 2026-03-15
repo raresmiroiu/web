@@ -9,7 +9,7 @@ export default async function MePage() {
   const session = await auth();
   const userId = session?.user?.id;
   const name = session?.user?.name ?? session?.user?.email ?? "Utilizator";
-  const firstName = name.split(" ")[0];
+  const firstName = name.includes("@") ? name.split("@")[0 ]: name.split(" ")[0];
 
   // TODO: Fetch certificate din DB
   //hardcodate
@@ -54,7 +54,7 @@ export default async function MePage() {
     <main style={{ background: "#0d0f0e", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
       <NavbarDashboard />
 
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "80px 24px 40px" }}>
 
         {/* Greeting */}
         <h1 style={{

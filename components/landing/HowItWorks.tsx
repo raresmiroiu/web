@@ -54,7 +54,7 @@ const HowItWorks = () => {
 							</div>
 							<div style={{
 								width: "100%", height: 1,
-								background: "linear-gradient(90deg, #c9a84c, transparent)",
+								background: "linear-gradient(90deg, transparent, #c9a84c, transparent)",
 								marginBottom: 20,
 							}} />
 							<div style={{ fontSize: 15, fontWeight: 500, color: "#e8e4db", marginBottom: 10 }}>{title}</div>
