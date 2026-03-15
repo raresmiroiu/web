@@ -1,8 +1,11 @@
 import React from 'react'
+import NavbarDashboard from '@/components/NavbarDashboard';
 
 const Org = () => {
   return (
-    <div>Org</div>
+    <main>
+      <NavbarDashboard />
+    </main>
   )
 }
 

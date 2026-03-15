@@ -139,7 +139,7 @@ function CertificatePreview() {
 				{/* Meta */}
 				<div className="meta-grid">
 					{[
-						{ label: "Data emiterii", val: "14 nov. 2024" },
+						{ label: "Data emiterii", val: "31 iulie 2027" },
 						{ label: "Domeniu", val: "Ing. software" },
 						{ label: "Cod unic", val: "SIG-A3F9C2E1", mono: true },
 						{ label: "Verificări", val: "3" },
