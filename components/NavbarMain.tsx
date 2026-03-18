@@ -24,6 +24,18 @@ const NavbarMain = () => {
 					SIGIL<span style={{ color: "#c9a84c" }}>LI</span>UM
 				</span>
 			</Link>
+			<div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+				<Link href="/" style={{ fontSize: 13, color: "#9e9b94", textDecoration: "none" }}>
+					Acasă
+				</Link>
+				<Link href="/login" style={{
+					fontSize: 13, fontWeight: 500, color: "#0d0f0e",
+					background: "#c9a84c", padding: "7px 18px",
+					borderRadius: 4, textDecoration: "none",
+				}}>
+					Autentificare
+				</Link>
+			</div>
 		</header>
 	);
 }

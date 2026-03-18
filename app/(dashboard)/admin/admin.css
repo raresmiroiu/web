@@ -72,11 +72,7 @@
     display: flex;
     overflow-x: auto;
     padding: 0 8px 8px;
-    scrollbar-width: none; /* Firefox */
     -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
-  }
-  .admin-sidebar nav::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
   }
   .admin-sidebar nav a {
     white-space: nowrap;

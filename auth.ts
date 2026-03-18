@@ -20,7 +20,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const email = credentials.email as string;
                 const password = credentials.password as string;
                 // user = { id: "1", email: "test@example.com", password: "$2b$10$nzoV17di3tJeLLcYBnaRP.UXvJzW3KkgB1Wq8.4OwlEVdSlAvmqWu" }; // Mock user
-                try {
+                try {   
                     const result = await pool.query(
                         "SELECT * FROM users WHERE email = $1",
                         [email]
