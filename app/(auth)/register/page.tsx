@@ -70,6 +70,19 @@ const Page = () => {
                 </div>
 
                 <div style={{ marginBottom: 20 }}>
+                  <label htmlFor="role" style={labelStyle}>Tip cont</label>
+                  <select
+                    id="role" name="role"
+                    required style={inputStyle}
+                    onFocus={e => e.target.style.borderColor = "#c9a84c"}
+                    onBlur={e => e.target.style.borderColor = "#2e332e"}
+                  >
+                    <option value="PARTICIPANT">Participant - Primesc certificate</option>
+                    <option value="ORG_OWNER">Organizație - Emit certificate</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
                   <label htmlFor="password" style={labelStyle}>Parolă</label>
                   <input
                     id="password" name="password" type="password"

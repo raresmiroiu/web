@@ -11,6 +11,9 @@ export async function RegisterAction(formData: FormData) {
     const email = (formData.get("email") as string)?.trim().toLowerCase()
     const password = formData.get("password") as string
     const confirm = formData.get("confirm") as string
+    const role = formData.get("role") as string
+    const validRoles = ["PARTICIPANT", "ORG_OWNER"]
+    const finalRole = validRoles.includes(role) ? role : "PARTICIPANT"
 
     // Validare basic
     if (!name || !email || !password) {
@@ -44,8 +47,8 @@ export async function RegisterAction(formData: FormData) {
         const hashedPassword = await hash(password, 10)
 
         await pool.query(
-            "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, 'PARTICIPANT')",
-            [name, email, hashedPassword]
+            "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)",
+            [name, email, hashedPassword, finalRole]
         )
         shouldRedirect = true
     } catch (error) {
@@ -53,7 +56,7 @@ export async function RegisterAction(formData: FormData) {
         return { success: false, message: "Eroare server. Încearcă din nou." }
     }
 
-    if(shouldRedirect){
+    if (shouldRedirect) {
         redirect("/login")
     }
 }
