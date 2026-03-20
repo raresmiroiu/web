@@ -1,14 +1,40 @@
+import { auth } from "@/auth";
+import { pool } from "@/libs/db"
 import CertificateTable, { OrgCertificate } from "@/components/org/CertificateTable";
 
 export default async function CertificatesPage() {
-    // TODO: fetch din DB
-    const certificates: OrgCertificate[] = [
-        { id: "1", title: "Curs React Avansat", recipientName: "Ion Popescu", issuedAt: "14 nov. 2024", code: "SIG-F1A2B3C4", verifications: 5, revoked: false },
-        { id: "2", title: "Securitate Web", recipientName: "Maria Ionescu", issuedAt: "03 ian. 2025", code: "SIG-D5E6F7G8", verifications: 2, revoked: false },
-        { id: "3", title: "DevOps Fundamentals", recipientName: "Elena Popa", issuedAt: "01 mar. 2025", code: "SIG-L3M4N5O6", verifications: 8, revoked: true },
-        { id: "4", title: "UI/UX Design", recipientName: "Andrei Vasile", issuedAt: "22 dec. 2024", code: "SIG-U7V8W9X0", verifications: 1, revoked: false },
-        { id: "5", title: "Baze de Date", recipientName: "Ana Marin", issuedAt: "18 oct. 2024", code: "SIG-B1C2D3E4", verifications: 12, revoked: false },
-    ];
+    const session = await auth();
+    const orgName = session?.user?.name;
+
+    const orgResult = await pool.query(
+        "SELECT id FROM organizations WHERE name = $1",
+        [orgName]
+    );
+    const orgId = orgResult.rows[0]?.id;
+    const certsResult = await pool.query(
+        `SELECT 
+            c.id, c.code, c.title, c.type,
+            c.issued_at, c.revoked, c.verifications,
+            u.name as recipient_name
+        FROM certificates c
+        LEFT JOIN users u ON c.recipient_id = u.id
+        WHERE c.org_id = $1
+        ORDER BY c.created_at DESC`,
+        [orgId]
+    );
+
+    const certificates: OrgCertificate[] = certsResult.rows.map(row => ({
+        id: String(row.id),
+        title: row.title,
+        type: row.type,
+        recipientName: row.recipient_name ?? "Necunoscut",
+        issuedAt: new Date(row.issued_at).toLocaleDateString("ro-RO", {
+            day: "numeric", month: "short", year: "numeric"
+        }),
+        code: row.code,
+        verifications: row.verifications,
+        revoked: row.revoked,
+    }));
 
     return (
         <div>

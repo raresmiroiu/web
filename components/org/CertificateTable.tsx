@@ -1,3 +1,6 @@
+"use client"
+import { revokeAction } from "@/libs/revoke-action";
+
 export interface OrgCertificate {
     id: string;
     title: string;
@@ -80,7 +83,9 @@ export default function CertificateTable({ certificates, showRevokeButton = fals
 
                         {/* Revoke button */}
                         {showRevokeButton && !cert.revoked && (
-                            <button style={{
+                            <button 
+                            onClick={() =>revokeAction(cert.id)}
+                            style={{
                                 fontSize: 10, color: "#5c5f5a",
                                 border: "1px solid #2e332e", background: "none",
                                 padding: "4px 10px", borderRadius: 4,

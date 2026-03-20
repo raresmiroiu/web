@@ -14,6 +14,7 @@ export const authConfig = {
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
+                token.name=user.name;
             }
             //console.log("JWT returning token:", token);
             return token;
