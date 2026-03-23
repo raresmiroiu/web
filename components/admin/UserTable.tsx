@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 export interface User {
   id: string;
   name: string | null;
@@ -34,88 +37,126 @@ const roleLabel: Record<User["role"], string> = {
 };
 
 export default function UserTable({ users }: Props) {
+  const [search, setSearch] = useState("");
+
+  const filtered = users.filter(
+    (u) =>
+      (u.name && u.name.toLowerCase().includes(search.toLowerCase())) ||
+      u.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div>
+      {/* Search */}
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="text"
+          placeholder="Caută după nume sau email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "8px 14px",
+            background: "#131614",
+            border: "1px solid #2e332e",
+            borderRadius: 4,
+            color: "#9e9b94",
+            fontSize: 13,
+            fontFamily: "'Outfit', sans-serif",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "#c9a84c")}
+          onBlur={(e) => (e.target.style.borderColor = "#2e332e")}
+        />
+      </div>
+
       <div>
-        {users.map((user) => {
-          const displayName = user.name ?? user.email;
-          const initials = displayName.includes("@")
-            ? displayName.split("@")[0].slice(0, 2).toUpperCase()
-            : displayName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)
-              .toUpperCase();
+        {filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#5c5f5a", fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>
+            Niciun utilizator găsit.
+          </div>
+        ) : (
+          filtered.map((user) => {
+            const displayName = user.name ?? user.email;
+            const initials = displayName.includes("@")
+              ? displayName.split("@")[0].slice(0, 2).toUpperCase()
+              : displayName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase();
 
-          return (
-            <div
-              key={user.id}
-              className="admin-card-row"
-            >
-              {/* Avatar */}
+            return (
               <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  background: "#1e2420",
-                  border: "1px solid #2e332e",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 10,
-                  color: "#c9a84c",
-                  fontFamily: "monospace",
-                  flexShrink: 0,
-                }}
+                key={user.id}
+                className="admin-card-row"
               >
-                {initials}
-              </div>
-
-              {/* Info */}
-              <div className="admin-card-info">
+                {/* Avatar */}
                 <div
-                  style={{ fontSize: 13, color: "#e8e4db", marginBottom: 2 }}
-                >
-                  {user.name ?? user.email}
-                </div>
-                <div style={{ fontSize: 11, color: "#5c5f5a" }}>
-                  {user.name ? user.email + " · " : ""}înregistrat{" "}
-                </div>
-              </div>
-
-              {/* Role badge */}
-              <div
-                style={{
-                  fontSize: 10,
-                  padding: "2px 8px",
-                  borderRadius: 100,
-                  flexShrink: 0,
-                  ...roleStyle[user.role],
-                }}
-              >
-                {roleLabel[user.role]}
-              </div>
-
-              <div className="admin-card-actions">
-                <button
                   style={{
-                    fontSize: 10,
-                    color: "#5c5f5a",
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: "#1e2420",
                     border: "1px solid #2e332e",
-                    background: "none",
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 10,
+                    color: "#c9a84c",
+                    fontFamily: "monospace",
+                    flexShrink: 0,
                   }}
                 >
-                  Detalii
-                </button>
+                  {initials}
+                </div>
+
+                {/* Info */}
+                <div className="admin-card-info">
+                  <div
+                    style={{ fontSize: 13, color: "#e8e4db", marginBottom: 2 }}
+                  >
+                    {user.name ?? user.email}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#5c5f5a" }}>
+                    {user.name ? user.email : ""}
+                  </div>
+                </div>
+
+                {/* Role badge */}
+                <div
+                  style={{
+                    fontSize: 10,
+                    padding: "2px 8px",
+                    borderRadius: 100,
+                    flexShrink: 0,
+                    ...roleStyle[user.role],
+                  }}
+                >
+                  {roleLabel[user.role]}
+                </div>
+
+                <div className="admin-card-actions">
+                  <button
+                    style={{
+                      fontSize: 10,
+                      color: "#5c5f5a",
+                      border: "1px solid #2e332e",
+                      background: "none",
+                      padding: "4px 10px",
+                      borderRadius: 4,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Detalii
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

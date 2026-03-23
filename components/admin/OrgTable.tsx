@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import { approveOrg, suspendOrg, reactivateOrg, rejectOrg } from "@/libs/org-actions";
 
 export interface Org {
@@ -39,10 +41,47 @@ const statusLabel: Record<Org["status"], string> = {
 };
 
 export default function OrgTable({ orgs }: Props) {
+  const [search, setSearch] = useState("");
+
+  const filtered = orgs.filter(
+    (o) =>
+      o.name.toLowerCase().includes(search.toLowerCase()) ||
+      o.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div>
+      {/* Search */}
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="text"
+          placeholder="Caută după nume sau email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "8px 14px",
+            background: "#131614",
+            border: "1px solid #2e332e",
+            borderRadius: 4,
+            color: "#9e9b94",
+            fontSize: 13,
+            fontFamily: "'Outfit', sans-serif",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "#c9a84c")}
+          onBlur={(e) => (e.target.style.borderColor = "#2e332e")}
+        />
+      </div>
+
       <div>
-        {orgs.map((org) => {
+        {filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#5c5f5a", fontSize: 14, fontFamily: "'Outfit', sans-serif" }}>
+            Nicio organizație găsită.
+          </div>
+        ) : (
+          filtered.map((org) => {
           const initials = org.name
             .split(" ")
             .map((n) => n[0])
@@ -190,7 +229,8 @@ export default function OrgTable({ orgs }: Props) {
               )}
             </div>
           );
-        })}
+        })
+        )}
       </div>
     </div>
   );

@@ -45,19 +45,6 @@ export default async function AdminCertificatesPage() {
             Toate certificatele emise pe platformă.
           </p>
         </div>
-        <input
-          placeholder="Caută certificat..."
-          style={{
-            background: "#131614",
-            border: "1px solid #2e332e",
-            borderRadius: 4,
-            padding: "7px 12px",
-            color: "#9e9b94",
-            fontSize: 12,
-            outline: "none",
-            width: 200,
-          }}
-        />
       </div>
 
       <CertificateTable certificates={certificates} showRevokeButton />
