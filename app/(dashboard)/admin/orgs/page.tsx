@@ -1,45 +1,28 @@
 import OrgTable, { Org } from "@/components/admin/OrgTable";
+import { pool } from "@/libs/db";
 
 export default async function AdminOrgsPage() {
-  // TODO: fetch din DB
-  const orgs: Org[] = [
-    {
-      id: "1",
-      name: "Academia Digitală",
-      email: "contact@academia.ro",
-      certificateCount: 12,
-      memberCount: 5,
-      status: "ACTIVE",
-      createdAt: "01 oct. 2024",
-    },
-    {
-      id: "2",
-      name: "CyberSec Academy",
-      email: "info@cybersec.ro",
-      certificateCount: 8,
-      memberCount: 3,
-      status: "ACTIVE",
-      createdAt: "15 nov. 2024",
-    },
-    {
-      id: "3",
-      name: "TechNova SRL",
-      email: "contact@technova.ro",
-      certificateCount: 0,
-      memberCount: 0,
-      status: "PENDING",
-      createdAt: "12 mar. 2025",
-    },
-    {
-      id: "4",
-      name: "DevPath Institute",
-      email: "dev@devpath.ro",
-      certificateCount: 3,
-      memberCount: 2,
-      status: "SUSPENDED",
-      createdAt: "20 ian. 2025",
-    },
-  ];
+  const result = await pool.query(`
+    SELECT
+      o.id, o.name, o.email, o.status,
+      TO_CHAR(o.created_at, 'DD Mon. YYYY') as created_at,
+      COUNT(DISTINCT c.id) as certificate_count,
+      COUNT(DISTINCT c.recipient_id) as member_count
+    FROM organizations o
+    LEFT JOIN certificates c ON c.org_id = o.id
+    GROUP BY o.id
+    ORDER BY o.created_at DESC
+  `);
+
+  const orgs: Org[] = result.rows.map(row => ({
+    id: String(row.id),
+    name: row.name,
+    email: row.email,
+    status: row.status as Org["status"],
+    certificateCount: Number(row.certificate_count),
+    memberCount: Number(row.member_count),
+    createdAt: row.created_at,
+  }));
 
   return (
     <div>

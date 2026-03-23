@@ -1,56 +1,30 @@
 import CertificateTable, {
   OrgCertificate,
 } from "@/components/org/CertificateTable";
+import { pool } from "@/libs/db";
 
 export default async function AdminCertificatesPage() {
-  // TODO: fetch din DB — toate certificatele din platformă
-  const certificates: OrgCertificate[] = [
-    {
-      id: "1",
-      title: "Curs React Avansat",
-      recipientName: "Ion Popescu",
-      issuedAt: "14 nov. 2024",
-      code: "SIG-F1A2B3C4",
-      verifications: 5,
-      revoked: false,
-    },
-    {
-      id: "2",
-      title: "Securitate Web",
-      recipientName: "Maria Ionescu",
-      issuedAt: "03 ian. 2025",
-      code: "SIG-D5E6F7G8",
-      verifications: 2,
-      revoked: false,
-    },
-    {
-      id: "3",
-      title: "Python pentru date",
-      recipientName: "Andrei Dumitrescu",
-      issuedAt: "22 feb. 2025",
-      code: "SIG-H9I0J1K2",
-      verifications: 0,
-      revoked: true,
-    },
-    {
-      id: "4",
-      title: "DevOps Fundamentals",
-      recipientName: "Elena Popa",
-      issuedAt: "01 mar. 2025",
-      code: "SIG-L3M4N5O6",
-      verifications: 8,
-      revoked: false,
-    },
-    {
-      id: "5",
-      title: "Inginerie Software — Licență",
-      recipientName: "Miroiu Rareș",
-      issuedAt: "14 nov. 2024",
-      code: "SIG-A3F9C2E1",
-      verifications: 3,
-      revoked: false,
-    },
-  ];
+  const result = await pool.query(`
+    SELECT
+      c.id, c.code, c.title, c.type,
+      c.revoked, c.verifications,
+      TO_CHAR(c.issued_at, 'DD Mon. YYYY') as issued_at,
+      u.name as recipient_name
+    FROM certificates c
+    LEFT JOIN users u ON c.recipient_id = u.id
+    ORDER BY c.created_at DESC, c.id DESC
+  `);
+
+  const certificates: OrgCertificate[] = result.rows.map(row => ({
+    id: String(row.id),
+    title: row.title,
+    type: row.type,
+    recipientName: row.recipient_name ?? "Necunoscut",
+    issuedAt: row.issued_at,
+    code: row.code,
+    verifications: row.verifications,
+    revoked: row.revoked,
+  }));
 
   return (
     <div>

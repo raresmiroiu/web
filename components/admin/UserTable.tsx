@@ -3,7 +3,6 @@ export interface User {
   name: string | null;
   email: string;
   role: "ADMIN" | "ORG_OWNER" | "PARTICIPANT";
-  createdAt: string;
 }
 
 interface Props {
@@ -43,11 +42,11 @@ export default function UserTable({ users }: Props) {
           const initials = displayName.includes("@")
             ? displayName.split("@")[0].slice(0, 2).toUpperCase()
             : displayName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase();
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase();
 
           return (
             <div
@@ -92,7 +91,6 @@ export default function UserTable({ users }: Props) {
                 </div>
                 <div style={{ fontSize: 11, color: "#5c5f5a" }}>
                   {user.name ? user.email + " · " : ""}înregistrat{" "}
-                  {user.createdAt}
                 </div>
               </div>
 

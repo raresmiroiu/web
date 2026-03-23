@@ -1,3 +1,5 @@
+import { approveOrg, suspendOrg, reactivateOrg, rejectOrg } from "@/libs/org-actions";
+
 export interface Org {
   id: string;
   name: string;
@@ -109,37 +111,43 @@ export default function OrgTable({ orgs }: Props) {
 
               {/* Actions */}
               {org.status === "PENDING" && (
-                <>
-                  <button
-                    style={{
-                      fontSize: 10,
-                      color: "#3ecf6e",
-                      border: "1px solid rgba(62,207,110,.25)",
-                      background: "rgba(62,207,110,.05)",
-                      padding: "4px 10px",
-                      borderRadius: 4,
-                      cursor: "pointer",
-                    }}
-                  >
-                    Aprobă
-                  </button>
-                  <button
-                    style={{
-                      fontSize: 10,
-                      color: "#e05c5c",
-                      border: "1px solid rgba(224,92,92,.2)",
-                      background: "none",
-                      padding: "4px 10px",
-                      borderRadius: 4,
-                      cursor: "pointer",
-                    }}
-                  >
-                    Respinge
-                  </button>
-                </>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <form action={approveOrg.bind(null, org.id)}>
+                    <button
+                      type="submit"
+                      style={{
+                        fontSize: 10,
+                        color: "#3ecf6e",
+                        border: "1px solid rgba(62,207,110,.25)",
+                        background: "rgba(62,207,110,.05)",
+                        padding: "4px 10px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Aprobă
+                    </button>
+                  </form>
+                  <form action={rejectOrg.bind(null, org.id)}>
+                    <button
+                      type="submit"
+                      style={{
+                        fontSize: 10,
+                        color: "#e05c5c",
+                        border: "1px solid rgba(224,92,92,.2)",
+                        background: "none",
+                        padding: "4px 10px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Respinge
+                    </button>
+                  </form>
+                </div>
               )}
               {org.status === "ACTIVE" && (
-                <>
+                <div style={{ display: "flex", gap: 8 }}>
                   <button
                     style={{
                       fontSize: 10,
@@ -153,35 +161,41 @@ export default function OrgTable({ orgs }: Props) {
                   >
                     Detalii
                   </button>
+                  <form action={suspendOrg.bind(null, org.id)}>
+                    <button
+                      type="submit"
+                      style={{
+                        fontSize: 10,
+                        color: "#e05c5c",
+                        border: "1px solid rgba(224,92,92,.2)",
+                        background: "none",
+                        padding: "4px 10px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Suspendă
+                    </button>
+                  </form>
+                </div>
+              )}
+              {org.status === "SUSPENDED" && (
+                <form action={reactivateOrg.bind(null, org.id)}>
                   <button
+                    type="submit"
                     style={{
                       fontSize: 10,
-                      color: "#e05c5c",
-                      border: "1px solid rgba(224,92,92,.2)",
-                      background: "none",
+                      color: "#3ecf6e",
+                      border: "1px solid rgba(62,207,110,.25)",
+                      background: "rgba(62,207,110,.05)",
                       padding: "4px 10px",
                       borderRadius: 4,
                       cursor: "pointer",
                     }}
                   >
-                    Suspendă
+                    Reactivează
                   </button>
-                </>
-              )}
-              {org.status === "SUSPENDED" && (
-                <button
-                  style={{
-                    fontSize: 10,
-                    color: "#3ecf6e",
-                    border: "1px solid rgba(62,207,110,.25)",
-                    background: "rgba(62,207,110,.05)",
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                  }}
-                >
-                  Reactivează
-                </button>
+                </form>
               )}
             </div>
           );

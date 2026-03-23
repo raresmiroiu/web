@@ -19,7 +19,7 @@ export default async function CertificatesPage() {
         FROM certificates c
         LEFT JOIN users u ON c.recipient_id = u.id
         WHERE c.org_id = $1
-        ORDER BY c.created_at DESC`,
+        ORDER BY c.created_at DESC, c.id DESC`,
         [orgId]
     );
 

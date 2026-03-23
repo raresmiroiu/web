@@ -1,44 +1,19 @@
 import UserTable, { User } from "@/components/admin/UserTable";
+import { pool } from "@/libs/db";
 
 export default async function AdminUsersPage() {
-  // TODO: fetch din DB
-  const users: User[] = [
-    {
-      id: "1",
-      name: "Ion Popescu",
-      email: "ion@exemplu.com",
-      role: "PARTICIPANT",
-      createdAt: "01 oct. 2024",
-    },
-    {
-      id: "2",
-      name: null,
-      email: "atm@atm.com",
-      role: "ORG_OWNER",
-      createdAt: "15 nov. 2024",
-    },
-    {
-      id: "3",
-      name: "Maria Ionescu",
-      email: "maria@exemplu.com",
-      role: "PARTICIPANT",
-      createdAt: "03 ian. 2025",
-    },
-    {
-      id: "4",
-      name: null,
-      email: "test@example.com",
-      role: "PARTICIPANT",
-      createdAt: "14 nov. 2024",
-    },
-    {
-      id: "5",
-      name: null,
-      email: "admin@example.com",
-      role: "ADMIN",
-      createdAt: "01 sept. 2024",
-    },
-  ];
+  const result = await pool.query(`
+    SELECT id, name, email, role
+    FROM users
+    ORDER BY id DESC
+  `);
+
+  const users: User[] = result.rows.map(row => ({
+    id: String(row.id),
+    name: row.name ?? null,
+    email: row.email,
+    role: row.role as User["role"],
+  }));
 
   return (
     <div>

@@ -5,7 +5,6 @@ import Stats from "@/components/me/Stats";
 import CertificateList from "@/components/me/CertificateList";
 import { Certificate } from "@/components/me/CertificateCard";
 import "./me.css";
-import { BattleNetIssuer } from "next-auth/providers/battlenet";
 
 export default async function MePage() {
   const session = await auth();
@@ -24,7 +23,7 @@ export default async function MePage() {
         ORDER BY c.created_at DESC`,
     [userId]
   );
-  
+
   const certificates: Certificate[] = result.rows.map(row => ({
     id: String(row.id),
     type: row.type,

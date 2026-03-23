@@ -13,7 +13,6 @@ export default async function AdminPage() {
     `);
     const stats = statsResult.rows[0];
 
-    // Organizații în așteptare
     const pendingResult = await pool.query(`
         SELECT id, name, email, status, created_at
         FROM organizations
@@ -30,7 +29,6 @@ export default async function AdminPage() {
         createdAt: new Date(row.created_at).toLocaleDateString("ro-RO"),
     }));
 
-    // Activitate recentă
     const activityResult = await pool.query(`
         SELECT 
             c.title, c.created_at,
@@ -91,7 +89,7 @@ export default async function AdminPage() {
                 Activitate recentă
             </p>
             <div>
-                {recentActivity.map(({ text, sub, badge, color },i) => (
+                {recentActivity.map(({ text, sub, badge, color }, i) => (
                     <div key={i} style={{
                         background: "#131614", border: "1px solid #2e332e",
                         borderRadius: 6, padding: "12px 16px",
