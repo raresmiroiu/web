@@ -40,8 +40,8 @@ const statusLabel: Record<Org["status"], string> = {
 
 export default function OrgTable({ orgs }: Props) {
   return (
-    <div style={{ overflowX: "auto" }}>
-      <div style={{ minWidth: 500 }}>
+    <div>
+      <div>
         {orgs.map((org) => {
           const initials = org.name
             .split(" ")
@@ -52,16 +52,7 @@ export default function OrgTable({ orgs }: Props) {
           return (
             <div
               key={org.id}
-              style={{
-                background: "#131614",
-                border: "1px solid #2e332e",
-                borderRadius: 6,
-                padding: "12px 16px",
-                marginBottom: 8,
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-              }}
+              className="admin-card-row"
             >
               {/* Avatar */}
               <div
@@ -84,7 +75,7 @@ export default function OrgTable({ orgs }: Props) {
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="admin-card-info">
                 <div
                   style={{ fontSize: 13, color: "#e8e4db", marginBottom: 2 }}
                 >
@@ -111,7 +102,7 @@ export default function OrgTable({ orgs }: Props) {
 
               {/* Actions */}
               {org.status === "PENDING" && (
-                <div style={{ display: "flex", gap: 8 }}>
+                <div className="admin-card-actions">
                   <form action={approveOrg.bind(null, org.id)}>
                     <button
                       type="submit"
@@ -147,7 +138,7 @@ export default function OrgTable({ orgs }: Props) {
                 </div>
               )}
               {org.status === "ACTIVE" && (
-                <div style={{ display: "flex", gap: 8 }}>
+                <div className="admin-card-actions">
                   <button
                     style={{
                       fontSize: 10,
@@ -180,7 +171,7 @@ export default function OrgTable({ orgs }: Props) {
                 </div>
               )}
               {org.status === "SUSPENDED" && (
-                <form action={reactivateOrg.bind(null, org.id)}>
+                <form action={reactivateOrg.bind(null, org.id)} className="admin-card-actions">
                   <button
                     type="submit"
                     style={{

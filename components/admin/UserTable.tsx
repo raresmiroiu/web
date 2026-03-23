@@ -35,8 +35,8 @@ const roleLabel: Record<User["role"], string> = {
 
 export default function UserTable({ users }: Props) {
   return (
-    <div style={{ overflowX: "auto" }}>
-      <div style={{ minWidth: 400 }}>
+    <div>
+      <div>
         {users.map((user) => {
           const displayName = user.name ?? user.email;
           const initials = displayName.includes("@")
@@ -51,16 +51,7 @@ export default function UserTable({ users }: Props) {
           return (
             <div
               key={user.id}
-              style={{
-                background: "#131614",
-                border: "1px solid #2e332e",
-                borderRadius: 6,
-                padding: "12px 16px",
-                marginBottom: 8,
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-              }}
+              className="admin-card-row"
             >
               {/* Avatar */}
               <div
@@ -83,7 +74,7 @@ export default function UserTable({ users }: Props) {
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="admin-card-info">
                 <div
                   style={{ fontSize: 13, color: "#e8e4db", marginBottom: 2 }}
                 >
@@ -107,19 +98,21 @@ export default function UserTable({ users }: Props) {
                 {roleLabel[user.role]}
               </div>
 
-              <button
-                style={{
-                  fontSize: 10,
-                  color: "#5c5f5a",
-                  border: "1px solid #2e332e",
-                  background: "none",
-                  padding: "4px 10px",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                }}
-              >
-                Detalii
-              </button>
+              <div className="admin-card-actions">
+                <button
+                  style={{
+                    fontSize: 10,
+                    color: "#5c5f5a",
+                    border: "1px solid #2e332e",
+                    background: "none",
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                  }}
+                >
+                  Detalii
+                </button>
+              </div>
             </div>
           );
         })}

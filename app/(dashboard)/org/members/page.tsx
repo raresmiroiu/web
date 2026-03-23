@@ -40,7 +40,7 @@ export default async function MembersPage() {
                 Membrii <em style={{ color: "#c9a84c", fontStyle: "italic" }}>Echipei</em>
             </h1>
             <p style={{ fontSize: 13, color: "#5c5f5a", marginBottom: 28 }}>
-                Persoanele cu acces la panoul acestei organizații.
+                Persoanele afiliate acestei organizații.
             </p>
 
             <MemberList members={members} />

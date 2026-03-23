@@ -103,4 +103,37 @@
   .admin-page-header input {
     width: 100% !important;
   }
+
+  .admin-card-row {
+    flex-wrap: wrap !important;
+  }
+  .admin-card-info {
+    flex: 1 1 100% !important;
+  }
+  .admin-card-actions {
+    margin-left: auto !important;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.admin-card-row {
+  background: #131614;
+  border: 1px solid #2e332e;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-card-actions {
+  display: flex;
+  gap: 8px;
 }
