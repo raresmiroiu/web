@@ -47,7 +47,7 @@ export default async function AdminCertificatesPage() {
         </div>
       </div>
 
-      <CertificateTable certificates={certificates} showRevokeButton />
+      <CertificateTable certificates={certificates} showRevokeButton basePath="/admin/certificates" />
     </div>
   );
 }
