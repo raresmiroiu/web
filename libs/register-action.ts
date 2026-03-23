@@ -44,12 +44,29 @@ export async function RegisterAction(formData: FormData) {
             return { success: false, message: "Există deja un cont cu acest email." }
         }
 
+        if (finalRole === "ORG_OWNER") {
+            const existingOrg = await pool.query(
+                "SELECT id FROM organizations WHERE name = $1",
+                [name]
+            )
+            if (existingOrg.rows.length > 0) {
+                return { success: false, message: "Există deja o organizație cu acest nume." }
+            }
+        }
+
         const hashedPassword = await hash(password, 10)
 
         await pool.query(
             "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)",
             [name, email, hashedPassword, finalRole]
         )
+        if (finalRole === "ORG_OWNER") {
+            await pool.query(
+                "INSERT INTO organizations (name, email, status) VALUES ($1, $2, 'PENDING')",
+                [name, email]
+            )
+        }
+
         shouldRedirect = true
     } catch (error) {
         console.error("Register error:", error)
