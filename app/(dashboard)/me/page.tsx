@@ -5,6 +5,7 @@ import Stats from "@/components/me/Stats";
 import CertificateList from "@/components/me/CertificateList";
 import { Certificate } from "@/components/me/CertificateCard";
 import "./me.css";
+import Link from "next/link";
 
 export default async function MePage() {
   const session = await auth();
@@ -63,9 +64,9 @@ export default async function MePage() {
         <Stats total={total} active={active} revoked={revoked} />
 
         {/* Section label */}
-        <p style={{ fontSize: 11, color: "#c9a84c", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16 }}>
+        <Link href="/me/certificates" style={{ fontSize: 11, color: "#c9a84c", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16 }}>
           Certificatele mele
-        </p>
+        </Link>
 
         {/* List */}
         <CertificateList certificates={certificates} />
