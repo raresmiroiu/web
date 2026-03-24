@@ -14,7 +14,7 @@ const Page = () => {
         padding: 24,
         fontFamily: "'Outfit', sans-serif",
       }}>
-        <div style={{ width: "100%", maxWidth: 400 }}>  
+        <div style={{ width: "100%", maxWidth: 400 }}>
           {/* Card */}
           <div style={{
             background: "#131614",
