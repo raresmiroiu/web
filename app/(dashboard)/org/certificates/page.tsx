@@ -1,8 +1,16 @@
 import { auth } from "@/auth";
 import { pool } from "@/libs/db"
 import CertificateTable, { OrgCertificate } from "@/components/org/CertificateTable";
+import Pagination from "@/components/Pagination";
+import { ITEMS_PER_PAGE } from "@/libs/constants";
 
-export default async function CertificatesPage() {
+export default async function CertificatesPage(
+    props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
+) {
+    const params = await props.searchParams;
+    const page = Number(params?.page) || 1;
+    const limit = ITEMS_PER_PAGE;
+    const offset = (page - 1) * limit;
     const session = await auth();
     const orgName = session?.user?.name;
 
@@ -11,6 +19,10 @@ export default async function CertificatesPage() {
         [orgName]
     );
     const orgId = orgResult.rows[0]?.id;
+
+    const countResult = await pool.query("SELECT COUNT(*) FROM certificates WHERE org_id = $1", [orgId]);
+    const totalPages = Math.ceil(Number(countResult.rows[0].count) / limit);
+
     const certsResult = await pool.query(
         `SELECT 
             c.id, c.code, c.title, c.type,
@@ -19,8 +31,9 @@ export default async function CertificatesPage() {
         FROM certificates c
         LEFT JOIN users u ON c.recipient_id = u.id
         WHERE c.org_id = $1
-        ORDER BY c.created_at DESC, c.id DESC`,
-        [orgId]
+        ORDER BY c.created_at DESC, c.id DESC
+        LIMIT $2 OFFSET $3`,
+        [orgId, limit, offset]
     );
 
     const certificates: OrgCertificate[] = certsResult.rows.map(row => ({
@@ -50,6 +63,7 @@ export default async function CertificatesPage() {
             </p>
 
             <CertificateTable certificates={certificates} showRevokeButton={true} />
+            <Pagination totalPages={totalPages} />
         </div>
     );
 }

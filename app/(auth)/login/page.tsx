@@ -1,7 +1,6 @@
 "use client";
 import { LoginAction } from "@/libs/login-action";
 import Link from "next/link";
-
 import NavbarMain from "@/components/NavbarMain";
 
 const Page = () => {

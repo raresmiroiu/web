@@ -1,12 +1,25 @@
 import UserTable, { User } from "@/components/admin/UserTable";
 import { pool } from "@/libs/db";
+import Pagination from "@/components/Pagination";
+import { ITEMS_PER_PAGE } from "@/libs/constants";
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage(
+  props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
+) {
+  const params = await props.searchParams;
+  const page = Number(params?.page) || 1;
+  const limit = ITEMS_PER_PAGE;
+  const offset = (page - 1) * limit;
+
+  const countResult = await pool.query("SELECT COUNT(*) FROM users");
+  const totalPages = Math.ceil(Number(countResult.rows[0].count) / limit);
+
   const result = await pool.query(`
     SELECT id, name, email, role
     FROM users
     ORDER BY id DESC
-  `);
+    LIMIT $1 OFFSET $2
+  `, [limit, offset]);
 
   const users: User[] = result.rows.map(row => ({
     id: String(row.id),
@@ -37,6 +50,7 @@ export default async function AdminUsersPage() {
       </div>
 
       <UserTable users={users} />
+      <Pagination totalPages={totalPages} />
     </div>
   );
 }

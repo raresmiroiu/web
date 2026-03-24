@@ -1,7 +1,19 @@
 import OrgTable, { Org } from "@/components/admin/OrgTable";
 import { pool } from "@/libs/db";
+import Pagination from "@/components/Pagination";
+import { ITEMS_PER_PAGE } from "@/libs/constants";
 
-export default async function AdminOrgsPage() {
+export default async function AdminOrgsPage(
+  props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
+) {
+  const params = await props.searchParams;
+  const page = Number(params?.page) || 1;
+  const limit = ITEMS_PER_PAGE;
+  const offset = (page - 1) * limit;
+
+  const countResult = await pool.query("SELECT COUNT(*) FROM organizations");
+  const totalPages = Math.ceil(Number(countResult.rows[0].count) / limit);
+
   const result = await pool.query(`
     SELECT
       o.id, o.name, o.email, o.status,
@@ -12,7 +24,8 @@ export default async function AdminOrgsPage() {
     LEFT JOIN certificates c ON c.org_id = o.id
     GROUP BY o.id
     ORDER BY o.created_at DESC
-  `);
+    LIMIT $1 OFFSET $2
+  `, [limit, offset]);
 
   const orgs: Org[] = result.rows.map(row => ({
     id: String(row.id),
@@ -46,6 +59,7 @@ export default async function AdminOrgsPage() {
       </div>
 
       <OrgTable orgs={orgs} />
+      <Pagination totalPages={totalPages} />
     </div>
   );
 }

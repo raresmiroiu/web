@@ -1,8 +1,16 @@
 import { auth } from "@/auth";
 import MemberList, { Member } from "@/components/org/MemberList";
 import { pool } from "@/libs/db"
+import Pagination from "@/components/Pagination";
+import { ITEMS_PER_PAGE } from "@/libs/constants";
 
-export default async function MembersPage() {
+export default async function MembersPage(
+    props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
+) {
+    const params = await props.searchParams;
+    const page = Number(params?.page) || 1;
+    const limit = ITEMS_PER_PAGE;
+    const offset = (page - 1) * limit;
     const session = await auth();
     const orgName = session?.user?.name;
     const orgResult = await pool.query(
@@ -10,6 +18,12 @@ export default async function MembersPage() {
         [orgName]
     );
     const orgId = orgResult.rows[0]?.id;
+
+    const countResult = await pool.query(
+        "SELECT COUNT(DISTINCT u.id) FROM users u JOIN certificates c ON c.recipient_id = u.id WHERE c.org_id = $1",
+        [orgId]
+    );
+    const totalPages = Math.ceil(Number(countResult.rows[0].count) / limit);
 
     const membersResult = await pool.query(
         `SELECT 
@@ -19,8 +33,9 @@ export default async function MembersPage() {
         JOIN certificates c ON c.recipient_id = u.id
         WHERE c.org_id = $1
         GROUP BY u.id, u.name, u.email
-        ORDER BY u.name`,
-        [orgId]
+        ORDER BY u.name
+        LIMIT $2 OFFSET $3`,
+        [orgId, limit, offset]
     );
 
     const members: Member[] = membersResult.rows.map(row => ({
@@ -31,7 +46,7 @@ export default async function MembersPage() {
     }));
 
     return (
-        <div style={{ maxWidth: 600 }}>
+        <div>
             <h1 style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 300,
@@ -44,6 +59,7 @@ export default async function MembersPage() {
             </p>
 
             <MemberList members={members} />
+            <Pagination totalPages={totalPages} />
         </div>
     );
 }

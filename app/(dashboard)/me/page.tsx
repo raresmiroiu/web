@@ -6,12 +6,36 @@ import CertificateList from "@/components/me/CertificateList";
 import { Certificate } from "@/components/me/CertificateCard";
 import "./me.css";
 import Link from "next/link";
+import Pagination from "@/components/Pagination";
 
-export default async function MePage() {
+export default async function MePage(
+  props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
+) {
   const session = await auth();
   const userId = session?.user?.id;
   const name = session?.user?.name ?? session?.user?.email ?? "Utilizator";
   const firstName = name.includes("@") ? name.split("@")[0] : name.split(" ")[0];
+
+  const params = await props.searchParams;
+  const page = Number(params?.page) || 1;
+  const limit = 3;
+  const offset = (page - 1) * limit;
+
+  const statsResult = await pool.query(
+    `SELECT 
+      COUNT(*) as total,
+      COUNT(*) FILTER (WHERE revoked = FALSE) as active,
+      COUNT(*) FILTER (WHERE revoked = TRUE) as revoked
+     FROM certificates 
+     WHERE recipient_id = $1`,
+    [userId]
+  );
+
+  const stats = statsResult.rows[0];
+  const total = Number(stats.total) || 0;
+  const active = Number(stats.active) || 0;
+  const revoked = Number(stats.revoked) || 0;
+  const totalPages = Math.ceil(total / limit);
 
   const result = await pool.query(
     `SELECT 
@@ -21,8 +45,9 @@ export default async function MePage() {
         FROM certificates c
         JOIN organizations o ON c.org_id = o.id
         WHERE c.recipient_id = $1
-        ORDER BY c.created_at DESC`,
-    [userId]
+        ORDER BY c.created_at DESC
+        LIMIT $2 OFFSET $3`,
+    [userId, limit, offset]
   );
 
   const certificates: Certificate[] = result.rows.map(row => ({
@@ -37,10 +62,6 @@ export default async function MePage() {
     verifications: row.verifications,
     revoked: row.revoked,
   }));
-
-  const total = certificates.length;
-  const active = certificates.filter(c => !c.revoked).length;
-  const revoked = certificates.filter(c => c.revoked).length;
 
   return (
     <main style={{ background: "#0d0f0e", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
@@ -70,6 +91,7 @@ export default async function MePage() {
 
         {/* List */}
         <CertificateList certificates={certificates} />
+        <Pagination totalPages={totalPages} />
       </div>
     </main>
   );
