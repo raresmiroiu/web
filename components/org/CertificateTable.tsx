@@ -6,6 +6,7 @@ export interface OrgCertificate {
     id: string;
     title: string;
     recipientName: string;
+    type: string;
     issuedAt: string;
     code: string;
     verifications: number;
