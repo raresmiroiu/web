@@ -28,7 +28,8 @@ export async function reactivateOrg(orgId: string) {
 
 export async function rejectOrg(orgId: string) {
     await pool.query(
-        "UPDATE organizations SET status = 'REJECTED' WHERE id = $1", [orgId]
+        "DELETE FROM organizations WHERE id = $1 AND status = 'PENDING'",
+        [orgId]
     );
     revalidatePath("/admin/orgs");
     revalidatePath("/admin");
