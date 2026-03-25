@@ -44,6 +44,7 @@ const Navbar = async () => {
 			<nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
 				<Link href="#features" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Funcționalități</Link>
 				<Link href="#how" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Cum funcționează</Link>
+				<Link href="/about" style={{ fontSize: 13, color: "#5c5f5a", textDecoration: "none", letterSpacing: "0.04em" }}>Despre noi</Link>
 			</nav>
 			<div className="navbar-actions" style={{ display: "flex", alignItems: "center", gap: 10 }}>
 			    {isLoggedIn ? (

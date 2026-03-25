@@ -29,6 +29,9 @@ export default function Footer() {
 				<Link href="/verify" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
 					Verificare publică
 				</Link>
+				<Link href="/about" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
+					Despre noi
+				</Link>
 			</div>
 		</footer>
 	);

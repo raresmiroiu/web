@@ -13,7 +13,6 @@ export default function AboutPage() {
         }}>
             <Navbar />
 
-            {/* Hero section */}
             <section style={{
                 minHeight: "60vh",
                 display: "flex", flexDirection: "column",
@@ -42,7 +41,6 @@ export default function AboutPage() {
                     pointerEvents: "none",
                 }} />
 
-                {/* Badge */}
                 <div style={{
                     display: "inline-flex", alignItems: "center", gap: 8,
                     border: "1px solid #6b5a28", background: "rgba(201,168,76,0.05)",
@@ -55,7 +53,6 @@ export default function AboutPage() {
                     Despre noi
                 </div>
 
-                {/* Title */}
                 <h1 style={{
                     fontFamily: "'Cormorant Garamond', serif",
                     fontSize: "clamp(40px, 6vw, 76px)",
@@ -68,7 +65,6 @@ export default function AboutPage() {
                     <em style={{ fontStyle: "italic", color: "#c9a84c" }}>Sigillium</em>
                 </h1>
 
-                {/* Subtitle */}
                 <p style={{
                     fontSize: 16, fontWeight: 300, color: "#9e9b94",
                     maxWidth: 560, lineHeight: 1.7,
@@ -78,7 +74,6 @@ export default function AboutPage() {
                 </p>
             </section>
 
-            {/* Mission section */}
             <section style={{
                 background: "#131614",
                 borderTop: "1px solid #232623", borderBottom: "1px solid #232623",
@@ -145,7 +140,6 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Story / Context section */}
             <section style={{ padding: "100px 24px" }}>
                 <div style={{ maxWidth: 900, margin: "0 auto" }}>
                     <div style={{ textAlign: "center", marginBottom: 64 }}>
@@ -174,12 +168,12 @@ export default function AboutPage() {
                             {
                                 num: "02",
                                 title: "Ideea",
-                                text: "Am pornit de la o întrebare simplă: «Ce ar fi dacă oricine ar putea verifica un certificat în 5 secunde, fără să apeleze la instituția emitentă?». Răspunsul a fost Sigillium — o platformă care digitizează întregul ciclu de viață al unui certificat.",
+                                text: "Am pornit de la o întrebare simplă: „Ce ar fi dacă oricine ar putea verifica un certificat în 5 secunde, fără să apeleze la instituția emitentă?”. Răspunsul a fost Sigillium - o platformă care digitizează întregul ciclu de viață al unui certificat.",
                             },
                             {
                                 num: "03",
                                 title: "Soluția",
-                                text: "Sigillium oferă un flux complet: înregistrare, emitere cu cod unic, generare automată de PDF cu QR code și verificare publică instantă. Totul este construit cu tehnologii moderne — Next.js, Prisma, PostgreSQL — punând accent pe securitate și experiența utilizatorului.",
+                                text: "Sigillium oferă un flux complet: înregistrare, emitere cu cod unic, generare automată de PDF cu QR code și verificare publică instantă. Totul este construit cu tehnologii moderne - Next.js, Pupeteer, PostgreSQL - punând accent pe securitate și experiența utilizatorului.",
                             },
                         ].map(({ num, title, text }) => (
                             <div key={num} style={{

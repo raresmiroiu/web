@@ -1,5 +1,6 @@
 import chromium from "@sparticuz/chromium";
 import Handlebars from "handlebars";
+import QRCode from "qrcode";
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');`;
 const BASE = `* { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 297mm; height: 210mm; overflow: hidden; }`;
@@ -30,6 +31,9 @@ function tmplAbsolvire(d: any) {
   .sig { position:absolute; bottom:20px; right:24px; text-align:right; }
   .sig-org { font-size:9px; color:#5c5f5a; }
   .sig-sub { font-size:7px; color:#3d4039; letter-spacing:0.14em; text-transform:uppercase; margin-top:2px; }
+  .qr { position:absolute; bottom:16px; left:20px; }
+  .qr img { width:70px; height:70px; }
+  .qr-label { font-size:6px; color:#3d4039; letter-spacing:0.16em; text-transform:uppercase; text-align:center; margin-top:3px; }
   </style></head><body>
   <div class="outer"><div class="sidebar"></div><div class="main">
     <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -47,6 +51,7 @@ function tmplAbsolvire(d: any) {
       <div class="fi"><div class="fi-label">Cod unic de verificare</div><div class="fi-code">${d.code}</div></div>
     </div>
     <div class="sig"><div class="sig-org">${d.issuer}</div><div class="sig-sub">Organizație acreditată Sigillium</div></div>
+    <div class="qr"><img src="${d.qrCode}" /><div class="qr-label">Scanează pentru verificare</div></div>
   </div></div>
   </body></html>`;
 }
@@ -105,6 +110,9 @@ function tmplCursProfesional(d: any) {
   .rm-value { font-size:11px; color:#5c5f5a; }
   .rm-code { font-family:'DM Mono',monospace; font-size:10px; color:#c9a84c; letter-spacing:0.04em; }
   .r-mark { position:absolute; bottom:18px; right:24px; font-size:7px; color:#e0ddd8; letter-spacing:0.2em; text-transform:uppercase; }
+  .qr { position:absolute; bottom:16px; left:20px; }
+  .qr img { width:70px; height:70px; }
+  .qr-label { font-size:6px; color:#c0bdb8; letter-spacing:0.16em; text-transform:uppercase; text-align:center; margin-top:3px; }
   </style></head><body>
   <div class="outer">
     <div class="left">
@@ -145,6 +153,7 @@ function tmplCursProfesional(d: any) {
         </div>
       </div>
       <div class="r-mark">Sigillium · Certificare Digitală</div>
+      <div class="qr"><img src="${d.qrCode}" /><div class="qr-label">Scanează</div></div>
     </div>
   </div>
   </body></html>`;
@@ -208,6 +217,9 @@ function tmplCompetitie(d: any) {
   .fi-label { font-size:7px; color:#3d4039; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:4px; }
   .fi-value { font-size:11px; color:#9e9b94; }
   .fi-code { font-family:'DM Mono',monospace; font-size:10px; color:#6b5a28; letter-spacing:0.06em; }
+  .qr { position:absolute; bottom:16px; left:20px; }
+  .qr img { width:70px; height:70px; }
+  .qr-label { font-size:6px; color:#3d4039; letter-spacing:0.16em; text-transform:uppercase; text-align:center; margin-top:3px; }
   </style></head><body>
   <div class="outer">
     <div class="glow"></div>
@@ -237,6 +249,7 @@ function tmplCompetitie(d: any) {
         <div class="fi-code">${d.code}</div>
       </div>
     </div>
+    <div class="qr"><img src="${d.qrCode}" /><div class="qr-label">Scanează</div></div>
   </div>
   </body></html>`;
 }
@@ -273,6 +286,9 @@ function tmplGeneric(d: any) {
   .fi-label { font-size:7px; color:#3d4039; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:4px; }
   .fi-value { font-size:11px; color:#9e9b94; }
   .fi-code { font-family:'DM Mono',monospace; font-size:10px; color:#6b5a28; }
+  .qr { position:absolute; bottom:16px; left:16px; }
+  .qr img { width:70px; height:70px; }
+  .qr-label { font-size:6px; color:#3d4039; letter-spacing:0.16em; text-transform:uppercase; text-align:center; margin-top:3px; }
   </style></head><body>
   <div class="outer">
     <div class="top"></div>
@@ -298,6 +314,7 @@ function tmplGeneric(d: any) {
         <div class="fi-code">${d.code}</div>
       </div>
     </div>
+    <div class="qr"><img src="${d.qrCode}" /><div class="qr-label">Scanează</div></div>
   </div>
   </body></html>`;
 }
@@ -319,6 +336,16 @@ function pickTemplate(certType: string) {
 export async function generatePdfBuffer(data: any, customHtmlString: string | null): Promise<Buffer> {
   let browser;
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const verifyUrl = `${baseUrl}/verify/${data.code}`;
+    const qrDataUri = await QRCode.toDataURL(verifyUrl, {
+      width: 200,
+      margin: 1,
+      color: { dark: "#c9a84c", light: "#0d0f0e" },
+      errorCorrectionLevel: "M",
+    });
+    data.qrCode = qrDataUri;
+
     // Încarcă Puppeteer în funcție de mediul curent
     if (process.env.NODE_ENV === "development" || process.platform === "win32") {
       const puppeteerLocal = require("puppeteer");
@@ -338,12 +365,17 @@ export async function generatePdfBuffer(data: any, customHtmlString: string | nu
     let finalHtml = "";
 
     if (customHtmlString) {
-      // 1. Dacă organizația a ales un template custom HTML
-      // Handlebars va înlocui automat variabilele (ex: {{recipientName}})
       const template = Handlebars.compile(customHtmlString);
       finalHtml = template(data);
+
+      if (!finalHtml.includes(qrDataUri)) {
+        const qrOverlay = `<div style="position:fixed;bottom:16px;right:20px;z-index:9999;text-align:center;">
+          <img src="${qrDataUri}" style="width:70px;height:70px;" />
+          <div style="font-size:6px;color:#3d4039;letter-spacing:0.16em;text-transform:uppercase;margin-top:3px;font-family:'Outfit',sans-serif;">Scanează</div>
+        </div>`;
+        finalHtml = finalHtml.replace("</body>", qrOverlay + "</body>");
+      }
     } else {
-      // 2. Dacă nu are template custom, folosim standardul Sigillium
       const templateFn = pickTemplate(data.type || "");
       finalHtml = templateFn(data);
     }
@@ -352,7 +384,7 @@ export async function generatePdfBuffer(data: any, customHtmlString: string | nu
     const pdfBytes = await page.pdf({
       format: "A4",
       landscape: true,
-      printBackground: true, // Printăm fundalul deoarece acum și custom e HTML!
+      printBackground: true,
     });
 
     return Buffer.from(pdfBytes);

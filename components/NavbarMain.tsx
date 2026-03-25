@@ -70,6 +70,9 @@ const NavbarMain = async () => {
 						<Link href="/" style={{ fontSize: 13, color: "#9e9b94", textDecoration: "none" }}>
 							Acasă
 						</Link>
+						<Link href="/about" style={{ fontSize: 13, color: "#9e9b94", textDecoration: "none" }}>
+							Despre noi
+						</Link>
 						<Link href="/login" style={{
 							fontSize: 13, fontWeight: 500, color: "#0d0f0e",
 							background: "#c9a84c", padding: "7px 18px",
