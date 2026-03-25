@@ -76,3 +76,22 @@ UPDATE certificates SET verifications = 7 WHERE code = 'SIG-B7D2F4A9';
 UPDATE certificates SET verifications = 2 WHERE code = 'SIG-D5E6F7G8';
 UPDATE certificates SET verifications = 1 WHERE code = 'SIG-H9I0J1K2';
 UPDATE certificates SET verifications = 8 WHERE code = 'SIG-L3M4N5O6';
+
+
+-- 1. Creăm tabelul nou pentru șabloanele HTML
+CREATE TABLE templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    html_content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Adăugăm o coloană opțională în tabelul 'certificates'
+-- Asta ne va ajuta să știm ce template s-a folosit pentru un anumit certificat
+ALTER TABLE certificates
+ADD COLUMN template_id UUID REFERENCES templates(id) ON DELETE SET NULL;
+
+-- 3. Ștergem coloana veche de PDF din organizații (nu mai avem nevoie de ea)
+ALTER TABLE organizations
+DROP COLUMN IF EXISTS pdf_template;

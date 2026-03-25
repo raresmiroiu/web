@@ -1,79 +1,25 @@
-#!/usr/bin/env node
-/**
- * Sigillium PDF Generator — Puppeteer + @sparticuz/chromium
- * Usage: node generate_pdf.js '<json>' [template_base64]
- * Writes PDF bytes to stdout.
- */
+import chromium from "@sparticuz/chromium";
+import { PDFDocument } from "pdf-lib";
 
-const chromium = require("@sparticuz/chromium");
-const puppeteer = require("puppeteer-core");
-const { PdfReader, PdfWriter } = require("pdf-lib"); // overlay for custom templates
+const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');`;
+const BASE = `* { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 297mm; height: 210mm; overflow: hidden; }`;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TEMPLATES
-// ─────────────────────────────────────────────────────────────────────────────
-
-const FONT_IMPORT = `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
-`;
-
-const BASE = `
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 297mm; height: 210mm; overflow: hidden; }
-`;
-
-// ── Template 1: Absolvire — dark formal ──────────────────────────────────────
-function tmplAbsolvire(d) {
+function tmplAbsolvire(d: any) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
-  body {
-    background: #0d0f0e;
-    font-family: 'Outfit', sans-serif;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .outer {
-    width: 278mm; height: 196mm;
-    border: 1px solid #2e332e;
-    display: flex; align-items: stretch;
-    position: relative; overflow: hidden;
-  }
-  .sidebar {
-    width: 9mm; flex-shrink: 0;
-    background: linear-gradient(180deg, #c9a84c 0%, #6b5a28 50%, #c9a84c 100%);
-  }
-  .main {
-    flex: 1;
-    border: 1px solid #1e2420;
-    margin: 10px 10px 10px 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; padding: 28px 44px;
-    position: relative;
-  }
+  body { background: #0d0f0e; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; }
+  .outer { width: 278mm; height: 196mm; border: 1px solid #2e332e; display: flex; align-items: stretch; position: relative; overflow: hidden; }
+  .sidebar { width: 9mm; flex-shrink: 0; background: linear-gradient(180deg, #c9a84c 0%, #6b5a28 50%, #c9a84c 100%); }
+  .main { flex: 1; border: 1px solid #1e2420; margin: 10px 10px 10px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px 44px; position: relative; }
   .corner { position: absolute; width: 18px; height: 18px; border-color: #c9a84c; border-style: solid; }
-  .tl { top:7px; left:7px; border-width:1.5px 0 0 1.5px; }
-  .tr { top:7px; right:7px; border-width:1.5px 1.5px 0 0; }
-  .bl { bottom:7px; left:7px; border-width:0 0 1.5px 1.5px; }
-  .br { bottom:7px; right:7px; border-width:0 1.5px 1.5px 0; }
-  .watermark {
-    position: absolute; top:50%; left:50%;
-    transform: translate(-50%,-50%);
-    font-family:'Cormorant Garamond',serif;
-    font-size: 100px; color: rgba(201,168,76,0.03);
-    white-space: nowrap; letter-spacing: 0.3em; pointer-events:none;
-  }
+  .tl { top:7px; left:7px; border-width:1.5px 0 0 1.5px; } .tr { top:7px; right:7px; border-width:1.5px 1.5px 0 0; }
+  .bl { bottom:7px; left:7px; border-width:0 0 1.5px 1.5px; } .br { bottom:7px; right:7px; border-width:0 1.5px 1.5px 0; }
+  .watermark { position: absolute; top:50%; left:50%; transform: translate(-50%,-50%); font-family:'Cormorant Garamond',serif; font-size: 100px; color: rgba(201,168,76,0.03); white-space: nowrap; letter-spacing: 0.3em; pointer-events:none; }
   .eyebrow { font-size:8px; color:#c9a84c; letter-spacing:0.26em; text-transform:uppercase; margin-bottom:14px; }
   .certifies { font-size:12px; color:#5c5f5a; font-style:italic; font-family:'Cormorant Garamond',serif; margin-bottom:8px; }
-  .recipient {
-    font-family:'Cormorant Garamond',serif;
-    font-size:52px; color:#c9a84c; font-style:italic; font-weight:400;
-    margin-bottom:10px; line-height:1;
-  }
+  .recipient { font-family:'Cormorant Garamond',serif; font-size:52px; color:#c9a84c; font-style:italic; font-weight:400; margin-bottom:10px; line-height:1; }
   .preposition { font-size:11px; color:#5c5f5a; letter-spacing:0.08em; margin-bottom:6px; }
-  .cert-title {
-    font-family:'Cormorant Garamond',serif;
-    font-size:22px; color:#e8e4db; font-weight:300; margin-bottom:6px;
-  }
+  .cert-title { font-family:'Cormorant Garamond',serif; font-size:22px; color:#e8e4db; font-weight:300; margin-bottom:6px; }
   .domain { font-size:9px; color:#6b5a28; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:24px; }
   .divider { width:60px; height:1px; background:#2e332e; margin:0 auto 20px; }
   .footer { display:flex; gap:52px; justify-content:center; }
@@ -85,45 +31,27 @@ function tmplAbsolvire(d) {
   .sig-org { font-size:9px; color:#5c5f5a; }
   .sig-sub { font-size:7px; color:#3d4039; letter-spacing:0.14em; text-transform:uppercase; margin-top:2px; }
   </style></head><body>
-  <div class="outer">
-    <div class="sidebar"></div>
-    <div class="main">
-      <div class="corner tl"></div><div class="corner tr"></div>
-      <div class="corner bl"></div><div class="corner br"></div>
-      <div class="watermark">SIGILLIUM</div>
-      <div class="eyebrow">Sigillium · Platformă de Certificare Digitală</div>
-      <div class="certifies">Prezenta certifică că</div>
-      <div class="recipient">${d.recipientName}</div>
-      <div class="preposition">a absolvit cu succes programul</div>
-      <div class="cert-title">${d.title}</div>
-      <div class="domain">${d.domain}</div>
-      <div class="divider"></div>
-      <div class="footer">
-        <div class="fi">
-          <div class="fi-label">Organizație emitentă</div>
-          <div class="fi-value">${d.issuer}</div>
-        </div>
-        <div class="fi">
-          <div class="fi-label">Data emiterii</div>
-          <div class="fi-value">${d.issuedAt}</div>
-        </div>
-        <div class="fi">
-          <div class="fi-label">Cod unic de verificare</div>
-          <div class="fi-code">${d.code}</div>
-        </div>
-      </div>
-      <div class="sig">
-        <div class="sig-org">${d.issuer}</div>
-        <div class="sig-sub">Organizație acreditată Sigillium</div>
-      </div>
+  <div class="outer"><div class="sidebar"></div><div class="main">
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+    <div class="watermark">SIGILLIUM</div>
+    <div class="eyebrow">Sigillium · Platformă de Certificare Digitală</div>
+    <div class="certifies">Prezenta certifică că</div>
+    <div class="recipient">${d.recipientName}</div>
+    <div class="preposition">a absolvit cu succes programul</div>
+    <div class="cert-title">${d.title}</div>
+    <div class="domain">${d.domain}</div>
+    <div class="divider"></div>
+    <div class="footer">
+      <div class="fi"><div class="fi-label">Organizație emitentă</div><div class="fi-value">${d.issuer}</div></div>
+      <div class="fi"><div class="fi-label">Data emiterii</div><div class="fi-value">${d.issuedAt}</div></div>
+      <div class="fi"><div class="fi-label">Cod unic de verificare</div><div class="fi-code">${d.code}</div></div>
     </div>
-  </div>
+    <div class="sig"><div class="sig-org">${d.issuer}</div><div class="sig-sub">Organizație acreditată Sigillium</div></div>
+  </div></div>
   </body></html>`;
 }
 
-// ── Template 2: Curs profesional — split panel ───────────────────────────────
-function tmplCursProfesional(d) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+function tmplCursProfesional(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body { background:#f8f7f4; font-family:'Outfit',sans-serif; display:flex; align-items:center; justify-content:center; }
   .outer {
@@ -218,12 +146,8 @@ function tmplCursProfesional(d) {
       <div class="r-mark">Sigillium · Certificare Digitală</div>
     </div>
   </div>
-  </body></html>`;
-}
-
-// ── Template 3: Competiție — event bold ──────────────────────────────────────
-function tmplCompetitie(d) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  </body></html>`; }
+function tmplCompetitie(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body {
     background:#0a0c0b;
@@ -310,11 +234,8 @@ function tmplCompetitie(d) {
       </div>
     </div>
   </div>
-  </body></html>`;
-}
-
-function tmplGeneric(d) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  </body></html>`; }
+function tmplGeneric(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body { background:#0d0f0e; font-family:'Outfit',sans-serif; display:flex; align-items:center; justify-content:center; }
   .outer {
@@ -371,8 +292,7 @@ function tmplGeneric(d) {
       </div>
     </div>
   </div>
-  </body></html>`;
-}
+  </body></html>`; }
 
 const TEMPLATE_MAP = [
   { keys: ["absolvire", "licenta", "licență", "diploma", "diplomă"], fn: tmplAbsolvire },
@@ -380,114 +300,86 @@ const TEMPLATE_MAP = [
   { keys: ["competitie", "competiție", "participare", "hackathon", "concurs", "olimpiada", "olimpiadă"], fn: tmplCompetitie },
 ];
 
-function pickTemplate(certType) {
+function pickTemplate(certType: string) {
   const key = certType.toLowerCase().trim();
   for (const { keys, fn } of TEMPLATE_MAP) {
     if (keys.some((k) => key.includes(k) || k.includes(key))) return fn;
   }
-  return tmplGeneric;
+  return tmplGeneric; // fall-back
 }
 
-async function generateOverlay(data, templateBytes, page) {
-  const overlayHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-  ${FONT_IMPORT} ${BASE}
-  body {
-    background: transparent;
-    font-family: 'Outfit', sans-serif;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center;
-  }
-  .content { padding: 20px; }
-  .type { font-size: 9px; color: #5c5f5a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
-  .recipient { font-family: 'Cormorant Garamond', serif; font-size: 52px; color: #1a0a00; font-style: italic; margin-bottom: 10px; line-height: 1; }
-  .title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #3d2200; margin-bottom: 8px; }
-  .meta { font-size: 10px; color: #6b5040; margin-top: 16px; }
-  .code { font-family: 'DM Mono', monospace; font-size: 9px; color: #8b6914; margin-top: 4px; }
-  </style></head><body>
-  <div class="content">
-    <div class="type">${data.type}</div>
-    <div class="recipient">${data.recipientName}</div>
-    <div class="title">${data.title}</div>
-    <div class="meta">${data.issuer} · ${data.issuedAt}</div>
-    <div class="code">${data.code}</div>
-  </div>
-  </body></html>`;
-
-  await page.setContent(overlayHtml, { waitUntil: "networkidle0" });
-  const overlayPdfBytes = await page.pdf({
-    format: "A4",
-    landscape: true,
-    printBackground: false, // transparent bg
-  });
-
-  const { PDFDocument } = require("pdf-lib");
-  const templateDoc = await PDFDocument.load(templateBytes);
-  const overlayDoc = await PDFDocument.load(overlayPdfBytes);
-
-  const templatePage = templateDoc.getPages()[0];
-  const [embeddedPage] = await templateDoc.embedPages([overlayDoc.getPages()[0]]);
-
-  const { width, height } = templatePage.getSize();
-  templatePage.drawPage(embeddedPage, { x: 0, y: 0, width, height });
-
-  return await templateDoc.save();
-}
-
-async function main() {
-  const dataJson = process.argv[2];
-  const templateB64 = process.argv[3]; // "null" or base64 string
-
-  if (!dataJson) {
-    process.stderr.write('Usage: node generate_pdf.js \'<json>\' [template_base64]\n');
-    process.exit(1);
-  }
-
-  const data = JSON.parse(dataJson);
-
-let browser;
-  
-  if (process.platform === "win32" || process.platform === "darwin") {
-    // Pentru dezvoltare locală pe Windows sau macOS folosim pachetul 'puppeteer' complet
-    const puppeteerLocal = require("puppeteer");
-    browser = await puppeteerLocal.launch({
-      headless: true,
-    });
-  } else {
-    // Pentru mediul de producție (Linux/Vercel) folosim @sparticuz/chromium
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
-  }
-
+export async function generatePdfBuffer(data: any, templateBuffer: Buffer | null): Promise<Buffer> {
+  let browser;
   try {
+    // Încarcă Puppeteer în funcție de mediul curent
+    if (process.env.NODE_ENV === "development" || process.platform === "win32") {
+      const puppeteerLocal = require("puppeteer");
+      browser = await puppeteerLocal.launch({ headless: true });
+    } else {
+      const puppeteerCore = require("puppeteer-core");
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      });
+    }
+
     const page = await browser.newPage();
-    await page.setViewport({ width: 1123, height: 794 }); //a4
+    await page.setViewport({ width: 1123, height: 794 }); // A4 landscape
 
-    let pdfBytes;
+    if (templateBuffer) {
+      // 1. Dacă organizația are template custom, facem Overlay-ul Transparent
+      const overlayHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+        ${FONT_IMPORT} ${BASE}
+        body { background: transparent; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .content { padding: 20px; }
+        .type { font-size: 9px; color: #5c5f5a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+        .recipient { font-family: 'Cormorant Garamond', serif; font-size: 52px; color: #1a0a00; font-style: italic; margin-bottom: 10px; line-height: 1; }
+        .title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #3d2200; margin-bottom: 8px; }
+        .meta { font-size: 10px; color: #6b5040; margin-top: 16px; }
+        .code { font-family: 'DM Mono', monospace; font-size: 9px; color: #8b6914; margin-top: 4px; }
+        </style></head><body>
+        <div class="content">
+          <div class="type">${data.type}</div>
+          <div class="recipient">${data.recipientName}</div>
+          <div class="title">${data.title}</div>
+          <div class="meta">${data.issuer} · ${data.issuedAt}</div>
+          <div class="code">${data.code}</div>
+        </div>
+        </body></html>`;
 
-    if (templateB64 && templateB64 !== "null") {
-      const templateBytes = Buffer.from(templateB64, "base64");
-      pdfBytes = await generateOverlay(data, templateBytes, page);
+      await page.setContent(overlayHtml, { waitUntil: "networkidle0" });
+      const overlayPdfBytes = await page.pdf({
+        format: "A4",
+        landscape: true,
+        printBackground: false, // Transparent
+      });
+
+      const templateDoc = await PDFDocument.load(templateBuffer);
+      const overlayDoc = await PDFDocument.load(overlayPdfBytes);
+
+      const templatePage = templateDoc.getPages()[0];
+      const [embeddedPage] = await templateDoc.embedPages([overlayDoc.getPages()[0]]);
+
+      const { width, height } = templatePage.getSize();
+      templatePage.drawPage(embeddedPage, { x: 0, y: 0, width, height });
+
+      const finalPdfBytes = await templateDoc.save();
+      return Buffer.from(finalPdfBytes);
+      
     } else {
       const templateFn = pickTemplate(data.type || "");
       const html = templateFn(data);
       await page.setContent(html, { waitUntil: "networkidle0" });
-      pdfBytes = await page.pdf({
+      const pdfBytes = await page.pdf({
         format: "A4",
         landscape: true,
         printBackground: true,
       });
+      
+      return Buffer.from(pdfBytes);
     }
-
-    process.stdout.write(pdfBytes);
   } finally {
-    await browser.close();
+    if (browser) await browser.close();
   }
 }
-
-main().catch((err) => {
-  process.stderr.write(String(err) + "\n");
-  process.exit(1);
-});
