@@ -1,3 +1,5 @@
+import DownloadPdfButton from "../DownloadPdfButton";
+
 export interface Certificate {
 	id: string;
 	type: string;
@@ -79,14 +81,7 @@ export default function CertificateCard({ cert }: Props) {
 							Valid
 						</div>
 					)}
-					<button style={{
-						fontSize: 11, color: "#c9a84c",
-						border: "1px solid #6b5a28", background: "rgba(201,168,76,.05)",
-						padding: "5px 12px", borderRadius: 4,
-						cursor: "pointer", fontFamily: "'Outfit', sans-serif",
-					}}>
-						Descarcă PDF
-					</button>
+					<DownloadPdfButton code={cert.code}/>
 				</div>
 			</div>
 

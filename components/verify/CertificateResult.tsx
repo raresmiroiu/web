@@ -1,3 +1,4 @@
+import DownloadPdfButton from "../DownloadPdfButton";
 import CopyLinkButton from "./CopyLinkButton";
 
 interface CertData {
@@ -102,19 +103,7 @@ export default function CertificateResult({ cert }: Props) {
             {/* Actions — doar pentru valid */}
             {isValid && (
                 <div className="verify-actions">
-                    <button style={{
-                        display: "inline-flex", alignItems: "center", gap: 6,
-                        fontSize: 12, color: "var(--gold)",
-                        border: "1px solid var(--gold-dim)", background: "var(--gold-subtle)",
-                        padding: "7px 14px", borderRadius: 4, cursor: "pointer",
-                    }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Descarcă PDF
-                    </button>
+                    <DownloadPdfButton code={cert.code} />
                     <CopyLinkButton />
                 </div>
             )}
