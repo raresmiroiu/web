@@ -444,11 +444,22 @@ async function main() {
 
   const data = JSON.parse(dataJson);
 
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-  });
+let browser;
+  
+  if (process.platform === "win32" || process.platform === "darwin") {
+    // Pentru dezvoltare locală pe Windows sau macOS folosim pachetul 'puppeteer' complet
+    const puppeteerLocal = require("puppeteer");
+    browser = await puppeteerLocal.launch({
+      headless: true,
+    });
+  } else {
+    // Pentru mediul de producție (Linux/Vercel) folosim @sparticuz/chromium
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+  }
 
   try {
     const page = await browser.newPage();

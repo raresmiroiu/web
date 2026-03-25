@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { uploadTemplateAction, removeTemplateAction } from "@/libs/template-action";
+import { uploadTemplateAction, removeTemplateAction } from "@/libs/template-action"
 
 interface Props {
   hasTemplate: boolean;
