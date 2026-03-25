@@ -1,6 +1,7 @@
 import chromium from "@sparticuz/chromium";
 import Handlebars from "handlebars";
 import QRCode from "qrcode";
+import { BASE_URL } from "@/libs/constants";
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');`;
 const BASE = `* { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 297mm; height: 210mm; overflow: hidden; }`;
@@ -336,8 +337,7 @@ function pickTemplate(certType: string) {
 export async function generatePdfBuffer(data: any, customHtmlString: string | null): Promise<Buffer> {
   let browser;
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const verifyUrl = `${baseUrl}/verify/${data.code}`;
+    const verifyUrl = `${BASE_URL}/verify/${data.code}`;
     const qrDataUri = await QRCode.toDataURL(verifyUrl, {
       width: 200,
       margin: 1,
