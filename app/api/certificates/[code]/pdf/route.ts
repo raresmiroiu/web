@@ -14,10 +14,11 @@ export async function GET(
       c.issued_at, c.revoked,
       u.name  AS recipient_name,
       o.name  AS issuer,
-      o.pdf_template
+      t.html_content AS custom_template
     FROM certificates c
     LEFT JOIN users u ON c.recipient_id = u.id
     LEFT JOIN organizations o ON c.org_id = o.id
+    LEFT JOIN templates t ON c.template_id = t.id
     WHERE c.code = $1`,
     [code.toUpperCase()]
   );
@@ -38,8 +39,8 @@ export async function GET(
     code: row.code,
   };
 
-  // row.pdf_template este deja un Buffer nativ (sau null), perfect pentru funcția noastră
-  const templateBuffer = row.pdf_template || null;
+  // row.custom_template este HTML-ul din tabelul templates (sau null)
+  const templateBuffer = row.custom_template || null;
 
   try {
     // Generăm binarul PDF direct în același proces de Node

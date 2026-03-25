@@ -1,7 +1,8 @@
 "use client";
 
 import { generateCertificate } from "@/libs/generateCertificate-action";
-import { useState } from "react";
+import { getOrgTemplatesAction } from "@/libs/template-action";
+import { useState, useEffect } from "react";
 
 const inputStyle = {
 	width: "100%", padding: "9px 13px",
@@ -18,6 +19,12 @@ const labelStyle = {
 
 export default function EmitForm() {
 	const [error, setError] = useState("");
+	const [templates, setTemplates] = useState<{ id: number; name: string }[]>([]);
+
+	useEffect(() => {
+		getOrgTemplatesAction().then((data) => setTemplates(data));
+	}, []);
+
 	return (
 		<div style={{ maxWidth: 520 }}>
 			<form action={async (formData) => {
@@ -80,6 +87,35 @@ export default function EmitForm() {
 						onFocus={e => e.target.style.borderColor = "#c9a84c"}
 						onBlur={e => e.target.style.borderColor = "#2e332e"}
 					/>
+				</div>
+
+				<div style={{ marginBottom: 28 }}>
+					<label style={labelStyle}>Șablon certificat</label>
+					<select
+						name="templateId"
+						defaultValue=""
+						style={{
+							...inputStyle,
+							appearance: "none" as const,
+							backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239e9b94' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+							backgroundRepeat: "no-repeat",
+							backgroundPosition: "right 12px center",
+							paddingRight: 36,
+							cursor: "pointer",
+						}}
+						onFocus={e => e.target.style.borderColor = "#c9a84c"}
+						onBlur={e => e.target.style.borderColor = "#2e332e"}
+					>
+						<option value="">Design standard Sigillium</option>
+						{templates.map((t) => (
+							<option key={t.id} value={t.id}>{t.name}</option>
+						))}
+					</select>
+					{templates.length === 0 && (
+						<div style={{ fontSize: 11, color: "#5c5f5a", marginTop: 6 }}>
+							Poți adăuga șabloane custom din pagina de Setări.
+						</div>
+					)}
 				</div>
 				{error && (
 					<div style={{

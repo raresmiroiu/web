@@ -1,13 +1,13 @@
 import { auth } from "@/auth";
 import { pool } from "@/libs/db";
-import TemplateUpload from "@/components/org/TemplateUpload";
+import TemplateUpload from "@/components/org/TemplateManager";
 
 export default async function OrgSettingsPage() {
   const session = await auth();
   const orgName = session?.user?.name;
 
   const orgResult = await pool.query(
-    "SELECT name, email, status, pdf_template IS NOT NULL as has_template FROM organizations WHERE name = $1",
+    "SELECT name, email, status FROM organizations WHERE name = $1",
     [orgName]
   );
   const org = orgResult.rows[0];
@@ -59,7 +59,7 @@ export default async function OrgSettingsPage() {
         Template certificate
       </div>
 
-      <TemplateUpload hasTemplate={!!org?.has_template} />
+      <TemplateUpload />
     </div>
   );
 }

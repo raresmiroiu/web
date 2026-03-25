@@ -4,60 +4,102 @@ import { pool } from "@/libs/db";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
-const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
-
-export async function uploadTemplateAction(formData: FormData): Promise<{
-  success: boolean;
-  message: string;
-}> {
+// 1. CREEAZĂ UN TEMPLATE NOU
+export async function createTemplateAction(name: string, htmlContent: string): Promise<{ success: boolean; message: string }> {
   const session = await auth();
   if (!session?.user || session.user.role !== "ORG_OWNER") {
     return { success: false, message: "Acces neautorizat." };
   }
 
-  const orgName = session.user.name;
-  const file = formData.get("template") as File | null;
-
-  if (!file || file.size === 0) {
-    return { success: false, message: "Niciun fișier selectat." };
+  if (!name || name.trim() === "") {
+    return { success: false, message: "Numele template-ului este obligatoriu." };
   }
 
-  if (file.type !== "application/pdf") {
-    return { success: false, message: "Fișierul trebuie să fie PDF." };
+  if (!htmlContent || htmlContent.trim() === "") {
+    return { success: false, message: "Codul HTML nu poate fi gol." };
   }
 
-  if (file.size > MAX_SIZE_BYTES) {
-    return { success: false, message: "Fișierul depășește limita de 5MB." };
+  try {
+    // Găsim ID-ul organizației pe baza numelui din sesiune
+    const orgResult = await pool.query(
+      "SELECT id FROM organizations WHERE name = $1",
+      [session.user.name]
+    );
+    const orgId = orgResult.rows[0]?.id;
+
+    if (!orgId) return { success: false, message: "Organizația nu a fost găsită." };
+
+    // Inserăm template-ul în noul tabel
+    await pool.query(
+      "INSERT INTO templates (org_id, name, html_content) VALUES ($1, $2, $3)",
+      [orgId, name, htmlContent]
+    );
+
+    // Revalidăm paginile unde afișăm template-urile
+    revalidatePath("/org/settings");
+    revalidatePath("/org/certificates/new");
+
+    return { success: true, message: "Template salvat cu succes!" };
+  } catch (error) {
+    console.error("Eroare la crearea template-ului:", error);
+    return { success: false, message: "A apărut o eroare la salvarea template-ului." };
   }
-
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-
-  await pool.query(
-    "UPDATE organizations SET pdf_template = $1 WHERE name = $2",
-    [buffer, orgName]
-  );
-
-  revalidatePath("/org/settings");
-  return { success: true, message: "Template încărcat cu succes." };
 }
 
-export async function removeTemplateAction(): Promise<{
-  success: boolean;
-  message: string;
-}> {
+// 2. ȘTERGE UN TEMPLATE
+export async function deleteTemplateAction(templateId: number): Promise<{ success: boolean; message: string }> {
   const session = await auth();
   if (!session?.user || session.user.role !== "ORG_OWNER") {
     return { success: false, message: "Acces neautorizat." };
   }
 
-  const orgName = session.user.name;
+  try {
+    const orgResult = await pool.query(
+      "SELECT id FROM organizations WHERE name = $1",
+      [session.user.name]
+    );
+    const orgId = orgResult.rows[0]?.id;
 
-  await pool.query(
-    "UPDATE organizations SET pdf_template = NULL WHERE name = $1",
-    [orgName]
-  );
+    if (!orgId) return { success: false, message: "Organizația nu a fost găsită." };
 
-  revalidatePath("/org/settings");
-  return { success: true, message: "Template șters." };
+    await pool.query(
+      "DELETE FROM templates WHERE id = $1 AND org_id = $2",
+      [templateId, orgId]
+    );
+
+    revalidatePath("/org/settings");
+    revalidatePath("/org/certificates/new");
+
+    return { success: true, message: "Template șters cu succes!" };
+  } catch (error) {
+    console.error("Eroare la ștergerea template-ului:", error);
+    return { success: false, message: "A apărut o eroare la ștergere." };
+  }
+}
+
+export async function getOrgTemplatesAction() {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "ORG_OWNER") {
+    return [];
+  }
+
+  try {
+    const orgResult = await pool.query(
+      "SELECT id FROM organizations WHERE name = $1",
+      [session.user.name]
+    );
+    const orgId = orgResult.rows[0]?.id;
+
+    if (!orgId) return [];
+
+    const templatesResult = await pool.query(
+      "SELECT id, name, html_content, created_at FROM templates WHERE org_id = $1 ORDER BY created_at DESC",
+      [orgId]
+    );
+
+    return templatesResult.rows;
+  } catch (error) {
+    console.error("Eroare la preluarea template-urilor:", error);
+    return [];
+  }
 }

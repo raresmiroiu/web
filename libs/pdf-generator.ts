@@ -1,5 +1,5 @@
 import chromium from "@sparticuz/chromium";
-import { PDFDocument } from "pdf-lib";
+import Handlebars from "handlebars";
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');`;
 const BASE = `* { margin: 0; padding: 0; box-sizing: border-box; } html, body { width: 297mm; height: 210mm; overflow: hidden; }`;
@@ -51,7 +51,8 @@ function tmplAbsolvire(d: any) {
   </body></html>`;
 }
 
-function tmplCursProfesional(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+function tmplCursProfesional(d: any) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body { background:#f8f7f4; font-family:'Outfit',sans-serif; display:flex; align-items:center; justify-content:center; }
   .outer {
@@ -146,8 +147,11 @@ function tmplCursProfesional(d: any) { return `<!DOCTYPE html><html><head><meta 
       <div class="r-mark">Sigillium · Certificare Digitală</div>
     </div>
   </div>
-  </body></html>`; }
-function tmplCompetitie(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  </body></html>`;
+}
+
+function tmplCompetitie(d: any) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body {
     background:#0a0c0b;
@@ -234,8 +238,11 @@ function tmplCompetitie(d: any) { return `<!DOCTYPE html><html><head><meta chars
       </div>
     </div>
   </div>
-  </body></html>`; }
-function tmplGeneric(d: any) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  </body></html>`;
+}
+
+function tmplGeneric(d: any) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
   ${FONT_IMPORT} ${BASE}
   body { background:#0d0f0e; font-family:'Outfit',sans-serif; display:flex; align-items:center; justify-content:center; }
   .outer {
@@ -292,7 +299,8 @@ function tmplGeneric(d: any) { return `<!DOCTYPE html><html><head><meta charset=
       </div>
     </div>
   </div>
-  </body></html>`; }
+  </body></html>`;
+}
 
 const TEMPLATE_MAP = [
   { keys: ["absolvire", "licenta", "licență", "diploma", "diplomă"], fn: tmplAbsolvire },
@@ -308,7 +316,7 @@ function pickTemplate(certType: string) {
   return tmplGeneric; // fall-back
 }
 
-export async function generatePdfBuffer(data: any, templateBuffer: Buffer | null): Promise<Buffer> {
+export async function generatePdfBuffer(data: any, customHtmlString: string | null): Promise<Buffer> {
   let browser;
   try {
     // Încarcă Puppeteer în funcție de mediul curent
@@ -327,58 +335,27 @@ export async function generatePdfBuffer(data: any, templateBuffer: Buffer | null
     const page = await browser.newPage();
     await page.setViewport({ width: 1123, height: 794 }); // A4 landscape
 
-    if (templateBuffer) {
-      // 1. Dacă organizația are template custom, facem Overlay-ul Transparent
-      const overlayHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-        ${FONT_IMPORT} ${BASE}
-        body { background: transparent; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .content { padding: 20px; }
-        .type { font-size: 9px; color: #5c5f5a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
-        .recipient { font-family: 'Cormorant Garamond', serif; font-size: 52px; color: #1a0a00; font-style: italic; margin-bottom: 10px; line-height: 1; }
-        .title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #3d2200; margin-bottom: 8px; }
-        .meta { font-size: 10px; color: #6b5040; margin-top: 16px; }
-        .code { font-family: 'DM Mono', monospace; font-size: 9px; color: #8b6914; margin-top: 4px; }
-        </style></head><body>
-        <div class="content">
-          <div class="type">${data.type}</div>
-          <div class="recipient">${data.recipientName}</div>
-          <div class="title">${data.title}</div>
-          <div class="meta">${data.issuer} · ${data.issuedAt}</div>
-          <div class="code">${data.code}</div>
-        </div>
-        </body></html>`;
+    let finalHtml = "";
 
-      await page.setContent(overlayHtml, { waitUntil: "networkidle0" });
-      const overlayPdfBytes = await page.pdf({
-        format: "A4",
-        landscape: true,
-        printBackground: false, // Transparent
-      });
-
-      const templateDoc = await PDFDocument.load(templateBuffer);
-      const overlayDoc = await PDFDocument.load(overlayPdfBytes);
-
-      const templatePage = templateDoc.getPages()[0];
-      const [embeddedPage] = await templateDoc.embedPages([overlayDoc.getPages()[0]]);
-
-      const { width, height } = templatePage.getSize();
-      templatePage.drawPage(embeddedPage, { x: 0, y: 0, width, height });
-
-      const finalPdfBytes = await templateDoc.save();
-      return Buffer.from(finalPdfBytes);
-      
+    if (customHtmlString) {
+      // 1. Dacă organizația a ales un template custom HTML
+      // Handlebars va înlocui automat variabilele (ex: {{recipientName}})
+      const template = Handlebars.compile(customHtmlString);
+      finalHtml = template(data);
     } else {
+      // 2. Dacă nu are template custom, folosim standardul Sigillium
       const templateFn = pickTemplate(data.type || "");
-      const html = templateFn(data);
-      await page.setContent(html, { waitUntil: "networkidle0" });
-      const pdfBytes = await page.pdf({
-        format: "A4",
-        landscape: true,
-        printBackground: true,
-      });
-      
-      return Buffer.from(pdfBytes);
+      finalHtml = templateFn(data);
     }
+
+    await page.setContent(finalHtml, { waitUntil: "networkidle0" });
+    const pdfBytes = await page.pdf({
+      format: "A4",
+      landscape: true,
+      printBackground: true, // Printăm fundalul deoarece acum și custom e HTML!
+    });
+
+    return Buffer.from(pdfBytes);
   } finally {
     if (browser) await browser.close();
   }
