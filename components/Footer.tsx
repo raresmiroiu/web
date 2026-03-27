@@ -21,11 +21,17 @@ export default function Footer() {
 			</div>
 
 			<div className="footer-links" style={{ display: "flex", gap: 24 }}>
-				{["Termeni", "Confidențialitate", "Contact"].map((item) => (
+				{["Termeni", "Confidențialitate"].map((item) => (
 					<Link key={item} href="#" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
 						{item}
 					</Link>
 				))}
+				<Link href="/contact" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
+					Contact
+				</Link>
+				<Link href="/gallery" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
+					Galerie
+				</Link>
 				<Link href="/verify" style={{ fontSize: 12, color: "#5c5f5a", textDecoration: "none" }}>
 					Verificare publică
 				</Link>
