@@ -1,4 +1,3 @@
-"use client";
 import Navbar from '@/components/landing/Navbar'
 import Footer from '@/components/Footer'
 import GalleryCarousel from '@/components/gallery/GalleryCarousel'
@@ -71,7 +70,6 @@ export default function GalleryPage() {
                 </p>
             </section>
 
-            {/* Gallery */}
             <section style={{
                 padding: "0 24px 100px",
                 maxWidth: 900, margin: "0 auto",
