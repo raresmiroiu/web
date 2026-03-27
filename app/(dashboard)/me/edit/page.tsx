@@ -1,6 +1,5 @@
 "use client";
 import NavbarDashboard from "@/components/NavbarDashboard";
-import "@/app/(dashboard)/me/me.css";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -23,12 +22,8 @@ export default function EditProfilePage() {
 
     return (
         <main style={{ background: "#0d0f0e", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
-            {/* @ts-expect-error Server Component */}
-            <NavbarDashboard />
-
             <div style={{ maxWidth: 560, margin: "0 auto", padding: "100px 24px 60px" }}>
 
-                {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
                     <Link href="/me" style={{ color: "#5c5f5a", textDecoration: "none", fontSize: 13 }}>
                         ← Înapoi
@@ -46,7 +41,6 @@ export default function EditProfilePage() {
                     Actualizează-ți informațiile personale și credențialele.
                 </p>
 
-                {/* Success message */}
                 {saved && (
                     <div style={{
                         fontSize: 13, color: "#3ecf6e",
@@ -61,7 +55,6 @@ export default function EditProfilePage() {
                     </div>
                 )}
 
-                {/* Avatar */}
                 <div style={{
                     display: "flex", alignItems: "center", gap: 20,
                     marginBottom: 36,
@@ -122,7 +115,6 @@ export default function EditProfilePage() {
                     </div>
                 </div>
 
-                {/* Change Password Section */}
                 <div style={{
                     background: "#131614", border: "1px solid #2e332e",
                     borderRadius: 8, overflow: "hidden", marginBottom: 32,
