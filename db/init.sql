@@ -1,7 +1,7 @@
-CREATE DATABASE sigillium;
+-- Tabela pentru tipurile de roluri
+CREATE TYPE user_role AS ENUM('ADMIN', 'ORG_OWNER', 'PARTICIPANT');
 
-CREATE TYPE user_role as ENUM('ADMIN','ORG_OWNER','PARTICIPANT');
-
+-- 1. Tabelul USERS
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
@@ -10,15 +10,20 @@ CREATE TABLE users (
     role user_role NOT NULL DEFAULT 'PARTICIPANT'
 );
 
-INSERT INTO users(email,password,role)
-VALUES ('test@example.com','$2b$10$nzoV17di3tJeLLcYBnaRP.UXvJzW3KkgB1Wq8.4OwlEVdSlAvmqWu','PARTICIPANT');
+-- Inserarea Conturilor Publice (Credentialele din README)
+-- Parola pentru test@example.com (Participant) -> '123456'
+INSERT INTO users(email, name, password, role)
+VALUES ('test@example.com', 'Participant Demo', '$2b$10$DmTZk8ZWLKcGWml/FM/r2OBb7NB78OgPyuaijTVUiF028036AP4fu', 'PARTICIPANT');
 
-INSERT INTO users(email,password,role)
-VALUES ('admin@example.com','$2b$10$xdspo7yUV1D.1rTAI7/ujuGPwIWM9tvHNGGfYztJ8VXYJ5uOUJCl.','ADMIN');
+-- Parola pentru admin@example.com (Administrator) -> 'admin'
+INSERT INTO users(email, name, password, role)
+VALUES ('admin@example.com', 'Administrator Suprem', '$2b$10$9l7nGPiJTeJNQdfO6VKa1O4.2hvzTrHlb6ysMBg90EFpwvYpPD2OW', 'ADMIN');
 
-INSERT INTO users(email,password,role)
-VALUES ('atm@atm.com','$2b$10$i1VpHJhKHI6nFQRHMt2NBen9ynrp0vKJy2b6zXS./Uu2WGvPwRX3y','ORG_OWNER'); 
+-- Parola pentru atm@atm.com (Organizație) -> 'ATM'
+INSERT INTO users(email, name, password, role)
+VALUES ('atm@atm.com', 'Academia Tehnică Militară', '$2b$10$HZnTX9kb8.SUQaB1UkuCf.BQbciiMyGf2QDAvxvVWGV6/19yephCm', 'ORG_OWNER'); 
 
+-- 2. Tabelul ORGANIZATIONS
 CREATE TABLE organizations (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
@@ -27,6 +32,23 @@ CREATE TABLE organizations (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Inserarea Organizațiilor
+INSERT INTO organizations (name, email, status) VALUES
+('Academia Tehnică Militară', 'atm@atm.com', 'ACTIVE'),
+('Academia Digitală', 'contact@academia.ro', 'ACTIVE'),
+('CyberSec Academy', 'info@cybersec.ro', 'ACTIVE'),
+('TechNova SRL', 'contact@technova.ro', 'PENDING');
+
+-- 3. Tabelul TEMPLATES
+CREATE TABLE templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    html_content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Tabelul CERTIFICATES
 CREATE TABLE certificates (
     id SERIAL PRIMARY KEY,
     code TEXT UNIQUE NOT NULL,
@@ -35,6 +57,7 @@ CREATE TABLE certificates (
     domain TEXT NOT NULL,
     recipient_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     org_id INTEGER REFERENCES organizations(id) ON DELETE SET NULL,
+    template_id UUID REFERENCES templates(id) ON DELETE SET NULL,
     issued_at DATE NOT NULL DEFAULT CURRENT_DATE,
     revoked BOOLEAN NOT NULL DEFAULT FALSE,
     revoked_at TIMESTAMP,
@@ -42,15 +65,11 @@ CREATE TABLE certificates (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-INSERT INTO organizations (name, email, status) VALUES
-('Academia Digitală', 'contact@academia.ro', 'ACTIVE'),
-('CyberSec Academy', 'info@cybersec.ro', 'ACTIVE'),
-('TechNova SRL', 'contact@technova.ro', 'PENDING');
-
+-- Inserarea de certificate de probă
 INSERT INTO certificates (code, title, type, domain, recipient_id, org_id, issued_at) VALUES
 ('SIG-A3F9C2E1', 'Inginerie Software — Licență', 'Certificat de absolvire', 'Inginerie software',
     (SELECT id FROM users WHERE email = 'test@example.com'),
-    (SELECT id FROM organizations WHERE name = 'Academia Digitală'),
+    (SELECT id FROM organizations WHERE name = 'Academia Tehnică Militară'),
     '2024-11-14'),
 ('SIG-B7D2F4A9', 'HackTM 2024 — Finalist', 'Participare competiție', 'Securitate informatică',
     (SELECT id FROM users WHERE email = 'test@example.com'),
@@ -69,6 +88,7 @@ INSERT INTO certificates (code, title, type, domain, recipient_id, org_id, issue
     (SELECT id FROM organizations WHERE name = 'CyberSec Academy'),
     '2025-03-01');
 
+-- Popularea stadiilor false de verificare/revocare
 UPDATE certificates SET revoked = TRUE, revoked_at = NOW() WHERE code = 'SIG-H9I0J1K2';
 
 UPDATE certificates SET verifications = 3 WHERE code = 'SIG-A3F9C2E1';
@@ -76,22 +96,3 @@ UPDATE certificates SET verifications = 7 WHERE code = 'SIG-B7D2F4A9';
 UPDATE certificates SET verifications = 2 WHERE code = 'SIG-D5E6F7G8';
 UPDATE certificates SET verifications = 1 WHERE code = 'SIG-H9I0J1K2';
 UPDATE certificates SET verifications = 8 WHERE code = 'SIG-L3M4N5O6';
-
-
--- 1. Creăm tabelul nou pentru șabloanele HTML
-CREATE TABLE templates (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    org_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    html_content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Adăugăm o coloană opțională în tabelul 'certificates'
--- Asta ne va ajuta să știm ce template s-a folosit pentru un anumit certificat
-ALTER TABLE certificates
-ADD COLUMN template_id UUID REFERENCES templates(id) ON DELETE SET NULL;
-
--- 3. Ștergem coloana veche de PDF din organizații (nu mai avem nevoie de ea)
-ALTER TABLE organizations
-DROP COLUMN IF EXISTS pdf_template;
