@@ -6,6 +6,7 @@ export default async function NavbarDashboard() {
 	const session = await auth();
 	const name = session?.user?.name ?? session?.user?.email ?? "Utilizator";
 	const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+	const editUrl = session?.user?.role === "ORG_OWNER" ? "/org/edit" : "/me/edit";
 	return (
 		<>
 			<header className="nav-dash" style={
@@ -29,15 +30,17 @@ export default async function NavbarDashboard() {
 					</span>
 				</Link>
 				<div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-					<span className="nav-dash-name" style={{ fontSize: 12, color: "#5c5f5a" }}>{name}</span>
-					<div style={{
-						width: 32, height: 32, borderRadius: "50%",
-						background: "#1e2420", border: "1px solid #2e332e",
-						display: "flex", alignItems: "center", justifyContent: "center",
-						fontSize: 11, color: "#c9a84c", fontFamily: "monospace"
-					}}>
-						{initials}
-					</div>
+					<Link href={editUrl} style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+						<span className="nav-dash-name" style={{ fontSize: 12, color: "#5c5f5a" }}>{name}</span>
+						<div style={{
+							width: 32, height: 32, borderRadius: "50%",
+							background: "#1e2420", border: "1px solid #2e332e",
+							display: "flex", alignItems: "center", justifyContent: "center",
+							fontSize: 11, color: "#c9a84c", fontFamily: "monospace"
+						}}>
+							{initials}
+						</div>
+					</Link>
 					<form action={async () => {
 						"use server"
 						await signOut({ redirectTo: "/" })
