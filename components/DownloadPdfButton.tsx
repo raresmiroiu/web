@@ -18,15 +18,17 @@ export default function DownloadPdfButton({ code }: Props) {
       const res = await fetch(`/api/certificates/${code}/pdf`);
 
       if (!res.ok) {
-        const { error } = await res.json().catch(() => ({ error: "Eroare necunoscută" }));
+        const { error } = await res
+          .json()
+          .catch(() => ({ error: "Eroare necunoscută" }));
         setError(error ?? "Generarea PDF-ului a eșuat.");
         return;
       }
 
       const blob = await res.blob();
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement("a");
-      a.href     = url;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
       a.download = `Sigillium-${code}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
@@ -60,8 +62,12 @@ export default function DownloadPdfButton({ code }: Props) {
         {loading ? (
           <>
             <svg
-              width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
               style={{ animation: "spin 1s linear infinite" }}
             >
               <path d="M21 12a9 9 0 11-6.219-8.56" />
@@ -71,7 +77,14 @@ export default function DownloadPdfButton({ code }: Props) {
           </>
         ) : (
           <>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
@@ -82,15 +95,17 @@ export default function DownloadPdfButton({ code }: Props) {
       </button>
 
       {error && (
-        <div style={{
-          marginTop: 6,
-          fontSize: 11,
-          color: "#e05c5c",
-          background: "rgba(224,92,92,.08)",
-          border: "1px solid rgba(224,92,92,.2)",
-          borderRadius: 4,
-          padding: "5px 10px",
-        }}>
+        <div
+          style={{
+            marginTop: 6,
+            fontSize: 11,
+            color: "#e05c5c",
+            background: "rgba(224,92,92,.08)",
+            border: "1px solid rgba(224,92,92,.2)",
+            borderRadius: 4,
+            padding: "5px 10px",
+          }}
+        >
           {error}
         </div>
       )}

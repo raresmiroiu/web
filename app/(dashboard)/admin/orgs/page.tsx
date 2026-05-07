@@ -2,19 +2,28 @@ import OrgTable, { Org } from "@/components/admin/OrgTable";
 import { pool } from "@/libs/db";
 import Pagination from "@/components/Pagination";
 import { ITEMS_PER_PAGE } from "@/libs/constants";
+import SearchBar from "@/components/SearchBar";
+import { Suspense } from "react";
 
-export default async function AdminOrgsPage(
-  props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
-) {
+export default async function AdminOrgsPage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
   const params = await props.searchParams;
   const page = Number(params?.page) || 1;
   const limit = ITEMS_PER_PAGE;
   const offset = (page - 1) * limit;
+  const q = params?.q?.trim() ?? "";
 
-  const countResult = await pool.query("SELECT COUNT(*) FROM organizations");
+  const countResult = await pool.query(
+    q
+      ? "SELECT COUNT(*) FROM organizations WHERE name ILIKE $1 OR email ILIKE $1"
+      : "SELECT COUNT(*) FROM organizations",
+    q ? [`%${q}%`] : [],
+  );
   const totalPages = Math.ceil(Number(countResult.rows[0].count) / limit);
 
-  const result = await pool.query(`
+  const result = await pool.query(
+    `
     SELECT
       o.id, o.name, o.email, o.status,
       TO_CHAR(o.created_at, 'DD Mon. YYYY') as created_at,
@@ -22,12 +31,15 @@ export default async function AdminOrgsPage(
       COUNT(DISTINCT c.recipient_id) as member_count
     FROM organizations o
     LEFT JOIN certificates c ON c.org_id = o.id
+    ${q ? "WHERE o.name ILIKE $3 OR o.email ILIKE $3" : ""}
     GROUP BY o.id
     ORDER BY o.created_at DESC
     LIMIT $1 OFFSET $2
-  `, [limit, offset]);
+  `,
+    q ? [limit, offset, `%${q}%`] : [limit, offset],
+  );
 
-  const orgs: Org[] = result.rows.map(row => ({
+  const orgs: Org[] = result.rows.map((row) => ({
     id: String(row.id),
     name: row.name,
     email: row.email,
@@ -56,6 +68,9 @@ export default async function AdminOrgsPage(
             Gestionează organizațiile înregistrate pe platformă.
           </p>
         </div>
+        <Suspense>
+          <SearchBar placeholder="Caută după nume sau email…" />
+        </Suspense>
       </div>
 
       <OrgTable orgs={orgs} />

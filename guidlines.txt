@@ -1,0 +1,45 @@
+Să se implementeze template-urile statice (Frontend-ul) pentru paginile din
+componența proiectului de semestru.
+Specificații
+Pentru paginile proiectului se vor folosi:
+• HTML (preferabil, standardul HTML 5.0)
+• JavaScript (nativ sau framework-uri)
+• CSS (preferabil, standardul CSS 3.0).
+În cadrul template-urilor, se vor implementa cel puțin următoarele pagini / module:
+• Modulele de autentificare și creare / editare a unui cont (Login/Register/Edit
+Profile) – 1p;
+• Pagina de start a aplicației (Homepage) – 1p;
+• Pagina principală specifică aplicației (de ex: pagina de listare a produselor
+pentru un magazin online, un dashboard pentru o aplicație de tip Planner,
+design-ul interfeței pentru un joc etc.) – 1p;
+• Pagina de administrare a site-ului (conturilor existente, produselor /
+elementelor specifice site-ului existente) – 1p;
+• O pagină de contact (cu date de contact, hartă, formular trimitere email, linkuri Social Media - pentru punctajul complet) – 1p;
+• O galerie de imagini (cu schimbare/derulare automată a imaginilor la 3
+secunde - pentru punctajul complet) – 1p.
+Modulele de mai sus pot fi combinate la nivelul paginilor sau chiar a unei singure
+pagini, pentru aplicațiile monolit.
+Suplimentar, se va ține cont în evaluarea temei și de următoarele:
+• Caracteristica site-ului de a fi “responsive” – adaptabilitate la rezoluție și ecrane
+diferite – 1p;
+• Design-ul paginilor – 1p;
+• Originalitate – contribuțiile personale aduse site-ului – 1p.
+Precizări suplimentare
+➢ Temele copiate vor primi 0p (ambele părți implicate) !
+➢ Sursele cu acelasi design intern vor primi 0p (ambele părți implicate) !
+➢ Este necesar ca paginile template să permită navigarea în site, chiar daca sunt
+statice (fără conexiune la server)
+➢ Design-ul paginilor rămâne în totalitate la alegerea voastră, atâta timp cât nu
+există teme identice (dimpotrivă, acest aspect ar trebui să reducă șansa apariției
+de astfel de “coincidențe”)
+➢ Este de preferat ca elementele de stil și clasele CSS să se rețină în fișiere
+separate, ci nu cu stiluri incluse în paginile HTML.
+➢ Puteti folosi Framework-uri și librării dedicate (ex: CSS Bootstrap, ReactJS,
+AngularJS etc.)
+Testarea temei
+➢ În vederea testării temei, pe lângă fișierele care reprezintă paginile propriu-zise,
+se va crea și un fișier readme.txt, care să explice, în mare, arhitectura templateurilor, contribuțiile voastre (pentru punctajul privind originalitatea) și să conțină
+instrucțiuni de utilizarea a site-ului (descriere generală a modelulelor și
+principalelor funcționalități). Lipsa acestuia duce la o penalizare de un punct.
+➢ Testarea se va face folosind ultima versiune a browser-elor Mozilla Firefox și
+Google Chrome

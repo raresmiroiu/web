@@ -4,7 +4,8 @@ import Providers from "./provider";
 
 export const metadata: Metadata = {
   title: "Sigillium",
-  description: "Platformă acreditată pentru generarea și validarea certificatelor profesionale",
+  description:
+    "Platformă acreditată pentru generarea și validarea certificatelor profesionale",
 };
 
 export default function RootLayout({
@@ -15,9 +16,7 @@ export default function RootLayout({
   return (
     <html lang="ro">
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

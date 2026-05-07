@@ -8,13 +8,15 @@ import "./me.css";
 import Link from "next/link";
 import Pagination from "@/components/Pagination";
 
-export default async function MePage(
-  props: { searchParams?: Promise<{ [key: string]: string | undefined }> }
-) {
+export default async function MePage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
   const session = await auth();
   const userId = session?.user?.id;
   const name = session?.user?.name ?? session?.user?.email ?? "Utilizator";
-  const firstName = name.includes("@") ? name.split("@")[0] : name.split(" ")[0];
+  const firstName = name.includes("@")
+    ? name.split("@")[0]
+    : name.split(" ")[0];
 
   const params = await props.searchParams;
   const page = Number(params?.page) || 1;
@@ -28,7 +30,7 @@ export default async function MePage(
       COUNT(*) FILTER (WHERE revoked = TRUE) as revoked
      FROM certificates 
      WHERE recipient_id = $1`,
-    [userId]
+    [userId],
   );
 
   const stats = statsResult.rows[0];
@@ -47,16 +49,18 @@ export default async function MePage(
         WHERE c.recipient_id = $1
         ORDER BY c.created_at DESC
         LIMIT $2 OFFSET $3`,
-    [userId, limit, offset]
+    [userId, limit, offset],
   );
 
-  const certificates: Certificate[] = result.rows.map(row => ({
+  const certificates: Certificate[] = result.rows.map((row) => ({
     id: String(row.id),
     type: row.type,
     title: row.title,
     issuer: row.issuer,
     issuedAt: new Date(row.issued_at).toLocaleDateString("ro-RO", {
-      day: "numeric", month: "short", year: "numeric"
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     }),
     code: row.code,
     verifications: row.verifications,
@@ -64,18 +68,32 @@ export default async function MePage(
   }));
 
   return (
-    <main style={{ background: "#0d0f0e", minHeight: "100vh", fontFamily: "'Outfit', sans-serif" }}>
+    <main
+      style={{
+        background: "#0d0f0e",
+        minHeight: "100vh",
+        fontFamily: "'Outfit', sans-serif",
+      }}
+    >
       <NavbarDashboard />
 
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "80px 24px 40px" }}>
-
+      <div
+        style={{ maxWidth: 860, margin: "0 auto", padding: "80px 24px 40px" }}
+      >
         {/* Greeting */}
-        <h1 style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 300,
-          color: "#e8e4db", marginBottom: 4,
-        }}>
-          Bună, <em style={{ color: "#c9a84c", fontStyle: "italic" }}>{firstName}.</em>
+        <h1
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(24px, 3vw, 36px)",
+            fontWeight: 300,
+            color: "#e8e4db",
+            marginBottom: 4,
+          }}
+        >
+          Bună,{" "}
+          <em style={{ color: "#c9a84c", fontStyle: "italic" }}>
+            {firstName}.
+          </em>
         </h1>
         <p style={{ fontSize: 13, color: "#5c5f5a", marginBottom: 32 }}>
           Certificatele tale digitale emise pe platformă.
@@ -85,7 +103,16 @@ export default async function MePage(
         <Stats total={total} active={active} revoked={revoked} />
 
         {/* Section label */}
-        <Link href="/me/certificates" style={{ fontSize: 11, color: "#c9a84c", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 16 }}>
+        <Link
+          href="/me/certificates"
+          style={{
+            fontSize: 11,
+            color: "#c9a84c",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            marginBottom: 16,
+          }}
+        >
           Certificatele mele
         </Link>
 

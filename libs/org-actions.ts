@@ -1,36 +1,37 @@
-"use server"
-import { pool } from "@/libs/db"
-import { revalidatePath } from "next/cache"
+"use server";
+import { pool } from "@/libs/db";
+import { revalidatePath } from "next/cache";
 
 export async function approveOrg(orgId: string) {
-    await pool.query(
-        "UPDATE organizations SET status = 'ACTIVE' WHERE id = $1", [orgId]
-    );
-    revalidatePath("/admin/orgs");
-    revalidatePath("/admin");
+  await pool.query("UPDATE organizations SET status = 'ACTIVE' WHERE id = $1", [
+    orgId,
+  ]);
+  revalidatePath("/admin/orgs");
+  revalidatePath("/admin");
 }
 
 export async function suspendOrg(orgId: string) {
-    await pool.query(
-        "UPDATE organizations SET status = 'SUSPENDED' WHERE id = $1", [orgId]
-    );
-    revalidatePath("/admin/orgs");
-    revalidatePath("/admin");
+  await pool.query(
+    "UPDATE organizations SET status = 'SUSPENDED' WHERE id = $1",
+    [orgId],
+  );
+  revalidatePath("/admin/orgs");
+  revalidatePath("/admin");
 }
 
 export async function reactivateOrg(orgId: string) {
-    await pool.query(
-        "UPDATE organizations SET status = 'ACTIVE' WHERE id = $1", [orgId]
-    );
-    revalidatePath("/admin/orgs");
-    revalidatePath("/admin");
+  await pool.query("UPDATE organizations SET status = 'ACTIVE' WHERE id = $1", [
+    orgId,
+  ]);
+  revalidatePath("/admin/orgs");
+  revalidatePath("/admin");
 }
 
 export async function rejectOrg(orgId: string) {
-    await pool.query(
-        "DELETE FROM organizations WHERE id = $1 AND status = 'PENDING'",
-        [orgId]
-    );
-    revalidatePath("/admin/orgs");
-    revalidatePath("/admin");
+  await pool.query(
+    "DELETE FROM organizations WHERE id = $1 AND status = 'PENDING'",
+    [orgId],
+  );
+  revalidatePath("/admin/orgs");
+  revalidatePath("/admin");
 }

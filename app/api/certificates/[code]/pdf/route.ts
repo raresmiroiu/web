@@ -4,7 +4,7 @@ import { generatePdfBuffer } from "@/libs/pdf-generator";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: Promise<{ code: string }> }
+  { params }: { params: Promise<{ code: string }> },
 ) {
   const { code } = await params;
 
@@ -20,12 +20,20 @@ export async function GET(
     LEFT JOIN organizations o ON c.org_id = o.id
     LEFT JOIN templates t ON c.template_id = t.id
     WHERE c.code = $1`,
-    [code.toUpperCase()]
+    [code.toUpperCase()],
   );
 
   const row = result.rows[0];
-  if (!row) return NextResponse.json({ error: "Certificate not found" }, { status: 404 });
-  if (row.revoked) return NextResponse.json({ error: "Certificate has been revoked" }, { status: 410 });
+  if (!row)
+    return NextResponse.json(
+      { error: "Certificate not found" },
+      { status: 404 },
+    );
+  if (row.revoked)
+    return NextResponse.json(
+      { error: "Certificate has been revoked" },
+      { status: 410 },
+    );
 
   const data = {
     recipientName: row.recipient_name ?? "—",
@@ -34,16 +42,16 @@ export async function GET(
     domain: row.domain,
     issuer: row.issuer ?? "—",
     issuedAt: new Date(row.issued_at).toLocaleDateString("ro-RO", {
-      day: "numeric", month: "long", year: "numeric",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     }),
     code: row.code,
   };
 
-  // row.custom_template este HTML-ul din tabelul templates (sau null)
   const templateBuffer = row.custom_template || null;
 
   try {
-    // Generăm binarul PDF direct în același proces de Node
     const pdfBytes = await generatePdfBuffer(data, templateBuffer);
 
     return new NextResponse(new Uint8Array(pdfBytes), {
@@ -56,6 +64,9 @@ export async function GET(
     });
   } catch (err) {
     console.error("PDF generation error:", err);
-    return NextResponse.json({ error: "PDF generation failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "PDF generation failed" },
+      { status: 500 },
+    );
   }
 }

@@ -321,9 +321,26 @@ function tmplGeneric(d: any) {
 }
 
 const TEMPLATE_MAP = [
-  { keys: ["absolvire", "licenta", "licență", "diploma", "diplomă"], fn: tmplAbsolvire },
-  { keys: ["curs profesional", "curs", "training", "formare", "workshop"], fn: tmplCursProfesional },
-  { keys: ["competitie", "competiție", "participare", "hackathon", "concurs", "olimpiada", "olimpiadă"], fn: tmplCompetitie },
+  {
+    keys: ["absolvire", "licenta", "licență", "diploma", "diplomă"],
+    fn: tmplAbsolvire,
+  },
+  {
+    keys: ["curs profesional", "curs", "training", "formare", "workshop"],
+    fn: tmplCursProfesional,
+  },
+  {
+    keys: [
+      "competitie",
+      "competiție",
+      "participare",
+      "hackathon",
+      "concurs",
+      "olimpiada",
+      "olimpiadă",
+    ],
+    fn: tmplCompetitie,
+  },
 ];
 
 function pickTemplate(certType: string) {
@@ -334,7 +351,10 @@ function pickTemplate(certType: string) {
   return tmplGeneric; // fall-back
 }
 
-export async function generatePdfBuffer(data: any, customHtmlString: string | null): Promise<Buffer> {
+export async function generatePdfBuffer(
+  data: any,
+  customHtmlString: string | null,
+): Promise<Buffer> {
   let browser;
   try {
     const verifyUrl = `${BASE_URL}/verify/${data.code}`;
@@ -346,8 +366,10 @@ export async function generatePdfBuffer(data: any, customHtmlString: string | nu
     });
     data.qrCode = qrDataUri;
 
-    // Încarcă Puppeteer în funcție de mediul curent
-    if (process.env.NODE_ENV === "development" || process.platform === "win32") {
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.platform === "win32"
+    ) {
       const puppeteerLocal = require("puppeteer");
       browser = await puppeteerLocal.launch({ headless: true });
     } else {
