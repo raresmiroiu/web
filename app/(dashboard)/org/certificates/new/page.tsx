@@ -1,6 +1,11 @@
+import { auth } from "@/auth";
+import { pool } from "@/libs/db";
 import EmitForm from "@/components/org/EmitForm";
 
-export default function NewCertificatePage() {
+export default async function NewCertificatePage() {
+  const session = await auth();
+  const orgName = session?.user?.name ?? "";
+
   return (
     <div>
       <h1
@@ -21,7 +26,7 @@ export default function NewCertificatePage() {
         Completează datele beneficiarului pentru a genera un certificat oficial.
       </p>
 
-      <EmitForm />
+      <EmitForm issuerName={orgName} />
     </div>
   );
 }

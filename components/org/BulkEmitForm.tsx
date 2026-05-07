@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { bulkGenerateCertificates, BulkRow, BulkResult } from "@/libs/bulk-generate-action";
 import { getOrgTemplatesAction } from "@/libs/template-action";
+import CertificatePreview from "./CertificatePreview";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -70,7 +71,7 @@ const labelStyle: React.CSSProperties = {
 
 type Step = "upload" | "preview" | "results";
 
-export default function BulkEmitForm() {
+export default function BulkEmitForm({ issuerName }: { issuerName: string }) {
   const [step, setStep] = useState<Step>("upload");
   const [rows, setRows] = useState<BulkRow[]>([]);
   const [results, setResults] = useState<BulkResult[]>([]);
@@ -82,6 +83,7 @@ export default function BulkEmitForm() {
   const [dragOver, setDragOver] = useState(false);
   const [templates, setTemplates] = useState<{ id: number; name: string }[]>([]);
   const [templateId, setTemplateId] = useState<number | null>(null);
+  const [selectedRowIndex, setSelectedRowIndex] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -143,6 +145,7 @@ export default function BulkEmitForm() {
     setResults([]);
     setError("");
     setProgress(0);
+    setSelectedRowIndex(0);
     if (fileRef.current) fileRef.current.value = "";
   };
 
@@ -274,10 +277,22 @@ export default function BulkEmitForm() {
 
   // ── STEP: Preview ─────────────────────────────────────────────────────────────
   if (step === "preview") {
+    const selectedTemplate = templates.find((t) => t.id === templateId) as any;
+    const previewRow = rows[selectedRowIndex] || rows[0];
+    const previewData = previewRow ? {
+      recipientName: previewRow.recipientName,
+      title: previewRow.title,
+      type: previewRow.type,
+      domain: previewRow.domain,
+      issuedAt: previewRow.issuedAt,
+      issuer: issuerName,
+    } : { issuer: issuerName };
+
     return (
-      <div style={{ maxWidth: 900 }}>
-        <div
-          style={{
+      <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap", maxWidth: 1200 }}>
+        <div style={{ flex: "1 1 600px", minWidth: 0 }}>
+          <div
+            style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -364,8 +379,16 @@ export default function BulkEmitForm() {
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #1e2420", background: i % 2 === 0 ? "#0a0c0b" : "#0d0f0e" }}>
-                  <td style={{ padding: "9px 14px", color: "#5c5f5a", fontFamily: "monospace" }}>{i + 1}</td>
+                <tr 
+                  key={i} 
+                  onClick={() => setSelectedRowIndex(i)}
+                  style={{ 
+                    cursor: "pointer",
+                    borderBottom: "1px solid #1e2420", 
+                    background: i === selectedRowIndex ? "rgba(201,168,76,0.1)" : (i % 2 === 0 ? "#0a0c0b" : "#0d0f0e") 
+                  }}
+                >
+                  <td style={{ padding: "9px 14px", color: i === selectedRowIndex ? "#c9a84c" : "#5c5f5a", fontFamily: "monospace" }}>{i + 1}</td>
                   <td style={{ padding: "9px 14px", color: "#e8e4db" }}>{row.recipientName || <span style={{ color: "#3d4039" }}>—</span>}</td>
                   <td style={{ padding: "9px 14px", color: "#9e9b94" }}>{row.recipientEmail}</td>
                   <td style={{ padding: "9px 14px", color: "#e8e4db" }}>{row.title}</td>
@@ -379,9 +402,17 @@ export default function BulkEmitForm() {
             </tbody>
           </table>
         </div>
+        <div style={{ fontSize: 11, color: "#5c5f5a", marginTop: 8 }}>
+          Click pe un rând pentru a-i vedea previzualizarea.
+        </div>
       </div>
-    );
-  }
+
+      <div style={{ flex: "0 0 340px", minWidth: 0 }}>
+        <CertificatePreview template={selectedTemplate} data={previewData} />
+      </div>
+    </div>
+  );
+}
 
   // ── STEP: Results ─────────────────────────────────────────────────────────────
   return (

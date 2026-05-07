@@ -1,7 +1,11 @@
 import BulkEmitForm from "@/components/org/BulkEmitForm";
 import Link from "next/link";
+import { auth } from "@/auth";
 
-export default function BulkCertificatesPage() {
+export default async function BulkCertificatesPage() {
+  const session = await auth();
+  const orgName = session?.user?.name ?? "";
+
   return (
     <div>
       <div
@@ -48,7 +52,7 @@ export default function BulkCertificatesPage() {
         </Link>
       </div>
 
-      <BulkEmitForm />
+      <BulkEmitForm issuerName={orgName} />
     </div>
   );
 }
