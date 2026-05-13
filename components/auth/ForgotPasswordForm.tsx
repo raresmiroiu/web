@@ -1,10 +1,16 @@
 "use client";
 import { useActionState } from "react";
-import { ForgotPasswordAction } from "@/libs/forgot-password-action";
+import { ForgotPasswordAction } from "../../libs/forgot-password-action";
 import Link from "next/link";
 
+type ActionState = {
+  success: boolean;
+  message: string;
+  password?: string;
+} | null;
+
 export default function ForgotPasswordForm() {
-  const [state, formAction, isPending] = useActionState(ForgotPasswordAction, null);
+  const [state, formAction, isPending] = useActionState<ActionState, FormData>(ForgotPasswordAction, null);
 
   return (
     <div
@@ -66,7 +72,7 @@ export default function ForgotPasswordForm() {
                     transition: "all 0.2s"
                   }}
                   onClick={(e) => {
-                    navigator.clipboard.writeText(state.password);
+                    navigator.clipboard.writeText(state.password || "");
                     const target = e.target as HTMLElement;
                     target.style.background = "#2e332e";
                     setTimeout(() => target.style.background = "#1e2420", 200);
