@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/auth";
-import { signOut } from "@/auth";
+import NavbarUserMenu from "./NavbarUserMenu";
 
 export default async function NavbarDashboard() {
   const session = await auth();
@@ -11,8 +11,16 @@ export default async function NavbarDashboard() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-  const editUrl =
-    session?.user?.role === "ORG_OWNER" ? "/org/edit" : "/me/edit";
+    
+  const role = session?.user?.role || "PARTICIPANT";
+  
+  let editUrl = "/me/edit";
+  if (role === "ORG_OWNER") {
+    editUrl = "/org/edit";
+  } else if (role === "ADMIN") {
+    editUrl = "/admin/edit";
+  }
+
   return (
     <>
       <header
@@ -76,60 +84,14 @@ export default async function NavbarDashboard() {
             SIGIL<span style={{ color: "#c9a84c" }}>LI</span>UM
           </span>
         </Link>
+        
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Link
-            href={editUrl}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              textDecoration: "none",
-            }}
-          >
-            <span
-              className="nav-dash-name"
-              style={{ fontSize: 12, color: "#5c5f5a" }}
-            >
-              {name}
-            </span>
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                background: "#1e2420",
-                border: "1px solid #2e332e",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 11,
-                color: "#c9a84c",
-                fontFamily: "monospace",
-              }}
-            >
-              {initials}
-            </div>
-          </Link>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/" });
-            }}
-          >
-            <button
-              type="submit"
-              style={{
-                fontSize: 12,
-                color: "#5c5f5a",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              Ieșire
-            </button>
-          </form>
+          <NavbarUserMenu 
+            name={name} 
+            initials={initials} 
+            editUrl={editUrl} 
+            role={role}
+          />
         </div>
       </header>
     </>

@@ -75,18 +75,22 @@ export default function LoginForm() {
               </div>
 
               <div style={{ marginBottom: 28 }}>
-                <label
-                  htmlFor="password"
-                  style={{
-                    display: "block",
-                    fontSize: 12,
-                    color: "#9e9b94",
-                    letterSpacing: "0.06em",
-                    marginBottom: 8,
-                  }}
-                >
-                  Parolă
-                </label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+                  <label
+                    htmlFor="password"
+                    style={{
+                      display: "block",
+                      fontSize: 12,
+                      color: "#9e9b94",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    Parolă
+                  </label>
+                  <Link href="/forgot-password" style={{ fontSize: 11, color: "#c9a84c", textDecoration: "none" }}>
+                    Ai uitat parola?
+                  </Link>
+                </div>
                 <input
                   id="password"
                   name="password"
